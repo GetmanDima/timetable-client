@@ -1,10 +1,14 @@
 import {useState, useEffect, useMemo} from "react";
-import {View, Text} from "react-native";
+import {View, ScrollView, Text} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchTimetables} from "../../api/timetable";
 import Loader from "../../components/Loader";
 import {getTimetable} from "../../store/actions/timetable";
+import {Button, TimeTableDayLesson} from "../../components";
+import styles from "./styles"
+import mainStyles from "../../styles/styles"
+import {weekDays} from "../../constants";
 
 const TimetableScreen = () => {
   const dispatch = useDispatch();
@@ -91,45 +95,78 @@ const TimetableScreen = () => {
   }, [timetable]);
   console.log(timetableDays);
 
-  const highWeekDayItems = useMemo(() => {
+  const highWeekDayLessons = useMemo(() => {
     return timetableDays &&
       timetableDays[currentWeekDay] &&
       timetableDays[currentWeekDay].high
       ? timetableDays[currentWeekDay].high.map(day => {
           return (
             <View key={day.id}>
-              <Text>{day.subject && day.subject.name}</Text>
+              <TimeTableDayLesson
+                subject={day.subject}
+                teacher={day.teacher}
+                room={day.room}
+                classType={day.classType}
+                format={day.format}
+                startTime={day.classTime.startTime}
+                endTime={day.classTime.endTime}
+                style={mainStyles.mb4}
+              />
             </View>
           );
         })
       : [];
   }, [timetableDays, currentWeekDay]);
 
-  const lowWeekDayItems = useMemo(() => {
+  const lowWeekDayLessons = useMemo(() => {
     return timetableDays &&
       timetableDays[currentWeekDay] &&
       timetableDays[currentWeekDay].low
       ? timetableDays[currentWeekDay].low.map(day => {
           return (
             <View key={day.id}>
-              <Text>{day.subject && day.subject.name}</Text>
+              <TimeTableDayLesson
+                subject={day.subject}
+                teacher={day.teacher}
+                room={day.room}
+                classType={day.classType}
+                format={day.format}
+                startTime={day.classTime.startTime}
+                endTime={day.classTime.endTime}
+                style={mainStyles.mb4}
+              />
             </View>
           );
         })
       : [];
   }, [timetableDays, currentWeekDay]);
 
+  const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"]
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       {loading && <Loader />}
-      {timetableDays && (
-        <View>
-          <Text>High week</Text>
-          {highWeekDayItems}
-          <Text>Low week</Text>
-          {lowWeekDayItems}
+      <ScrollView>
+        <View style={[{flexDirection: "row", flexWrap: "wrap"}, mainStyles.mb5]}>
+          {shortWeekDays.map((day, idx) => (
+            <Button key={day} onPress={() => setCurrentWeekDay(weekDays[idx])}
+                    text={day} style={{width: 50, marginHorizontal: 5}}
+                    type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
+            />
+          ))}
         </View>
-      )}
+
+        <View style={{alignItems: "center"}}>
+          {timetableDays && (
+            <View style={{width: "100%", alignItems: "center"}}>
+              <Text style={[mainStyles.h1, mainStyles.textSecondary, mainStyles.mb4]}>High week</Text>
+              {highWeekDayLessons}
+              <Text style={[mainStyles.h1, mainStyles.textSecondary, mainStyles.mt5, mainStyles.mb4]}>Low week</Text>
+              {lowWeekDayLessons}
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
