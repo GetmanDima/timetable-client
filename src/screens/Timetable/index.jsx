@@ -2,166 +2,144 @@ import {useState, useEffect, useMemo} from "react";
 import {View, ScrollView, Text} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchTimetables} from "../../api/timetable";
 import Loader from "../../components/Loader";
-import {getTimetable} from "../../store/actions/timetable";
+import {getTimetableLessons} from "../../store/actions/timetableLesson";
 import {Button, TimeTableDayLesson} from "../../components";
-import styles from "./styles"
-import mainStyles from "../../styles/styles"
+import styles from "./styles";
+import mainStyles from "../../styles/styles";
 import {weekDays} from "../../constants";
 
-const TimetableScreen = () => {
+const TimetableScreen = ({route, navigation}) => {
+  const {timetableId} = route.params;
+
   const dispatch = useDispatch();
 
-  const {accessToken, timetable, loading} = useSelector(state => {
+  const {weekDaysWithLessons, loading, errors} = useSelector(state => {
     return {
-      accessToken: state.auth.accessToken,
-      timetable: state.timetable.timetable,
-      loading: state.timetable.loading,
+      weekDaysWithLessons:
+        state.timetableLesson.weekDaysWithLessons[timetableId],
+      loading: state.timetableLesson.loadings[timetableId],
+      errors: state.timetableLesson.errors[timetableId],
     };
   });
 
   const [currentWeekDay, setCurrentWeekDay] = useState("monday");
 
   useEffect(() => {
-    console.log("use effect");
-    fetchTimetables(accessToken)
-      .then(res => {
-        if (res.data.length > 0) {
-          const lastTimetable = res.data[res.data.length - 1];
-          dispatch(getTimetable(lastTimetable.id));
-        }
-      })
-      .catch(e => {
-        console.log(e.message);
-      });
+    if (!weekDaysWithLessons) {
+      dispatch(getTimetableLessons(timetableId));
+    }
   }, []);
 
-  const timetableDays = useMemo(() => {
-    return timetable && timetable.TimetableDays
-      ? timetable.TimetableDays.reduce((timetable, day) => {
-          const newWeekTypeData = {
-            id: day.id,
-            format: day.format,
-            classType: day.classType,
-            room: day.room,
-            classTime: day.ClassTime,
-            subject: day.Subject,
-            teacher: day.Teacher,
-            campus: day.Campus,
-          };
-
-          const timetableWeekDay = timetable[day.weekDay]
-            ? timetable[day.weekDay]
-            : {};
-
-          let newWeekType = {};
-
-          if (day.weekDay && day.weekType) {
-            if (
-              timetable[day.weekDay] &&
-              timetable[day.weekDay][day.weekType]
-            ) {
-              newWeekType = {
-                [day.weekType]: [
-                  ...timetable[day.weekDay][day.weekType],
-                  newWeekTypeData,
-                ],
-              };
-            } else {
-              newWeekType = {
-                [day.weekType]: [newWeekTypeData],
-              };
-            }
-          }
-
-          let newWeekDay = {};
-
-          if (day.weekDay) {
-            newWeekDay = {
-              [day.weekDay]: {
-                ...timetableWeekDay,
-                ...newWeekType,
-              },
-            };
-          }
-
-          return {
-            ...timetable,
-            ...newWeekDay,
-          };
-        }, {})
-      : {};
-  }, [timetable]);
-  console.log(timetableDays);
-
   const highWeekDayLessons = useMemo(() => {
-    return timetableDays &&
-      timetableDays[currentWeekDay] &&
-      timetableDays[currentWeekDay].high
-      ? timetableDays[currentWeekDay].high.map(day => {
-          return (
-            <View key={day.id}>
-              <TimeTableDayLesson
-                subject={day.subject}
-                teacher={day.teacher}
-                room={day.room}
-                classType={day.classType}
-                format={day.format}
-                startTime={day.classTime.startTime}
-                endTime={day.classTime.endTime}
-                style={mainStyles.mb4}
-              />
-            </View>
-          );
-        })
+    return weekDaysWithLessons &&
+      weekDaysWithLessons[currentWeekDay] &&
+      weekDaysWithLessons[currentWeekDay].high
+      ? weekDaysWithLessons[currentWeekDay].high
+          .sort(
+            (day1, day2) => day1.classTime.startTime > day2.classTime.startTime,
+          )
+          .map(day => {
+            return (
+              <View key={day.id}>
+                <TimeTableDayLesson
+                  subject={day.subject}
+                  teacher={day.teacher}
+                  room={day.room}
+                  classType={day.classType}
+                  format={day.format}
+                  startTime={day.classTime.startTime}
+                  endTime={day.classTime.endTime}
+                  style={mainStyles.mb4}
+                />
+              </View>
+            );
+          })
       : [];
-  }, [timetableDays, currentWeekDay]);
+  }, [weekDaysWithLessons, currentWeekDay]);
 
   const lowWeekDayLessons = useMemo(() => {
-    return timetableDays &&
-      timetableDays[currentWeekDay] &&
-      timetableDays[currentWeekDay].low
-      ? timetableDays[currentWeekDay].low.map(day => {
-          return (
-            <View key={day.id}>
-              <TimeTableDayLesson
-                subject={day.subject}
-                teacher={day.teacher}
-                room={day.room}
-                classType={day.classType}
-                format={day.format}
-                startTime={day.classTime.startTime}
-                endTime={day.classTime.endTime}
-                style={mainStyles.mb4}
-              />
-            </View>
-          );
-        })
+    return weekDaysWithLessons &&
+      weekDaysWithLessons[currentWeekDay] &&
+      weekDaysWithLessons[currentWeekDay].low
+      ? weekDaysWithLessons[currentWeekDay].low
+          .sort(
+            (day1, day2) => day1.classTime.startTime > day2.classTime.startTime,
+          )
+          .map(day => {
+            return (
+              <View key={day.id}>
+                <TimeTableDayLesson
+                  subject={day.subject}
+                  teacher={day.teacher}
+                  room={day.room}
+                  classType={day.classType}
+                  format={day.format}
+                  startTime={day.classTime.startTime}
+                  endTime={day.classTime.endTime}
+                  style={mainStyles.mb4}
+                />
+              </View>
+            );
+          })
       : [];
-  }, [timetableDays, currentWeekDay]);
+  }, [weekDaysWithLessons, currentWeekDay]);
 
-  const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"]
+  const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
 
   return (
     <SafeAreaView style={styles.container}>
       {loading && <Loader />}
       <ScrollView>
-        <View style={[{flexDirection: "row", flexWrap: "wrap"}, mainStyles.mb5]}>
+        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+          <Text
+            style={[
+              mainStyles.h1,
+              mainStyles.mb5,
+              {textAlign: "center", color: "#fff"},
+            ]}>
+            Timetable
+          </Text>
+          <Button
+            text="To timetables"
+            style={{height: 50, width: 150}}
+            onPress={() => navigation.navigate("Timetables")}
+          />
+        </View>
+        <View
+          style={[{flexDirection: "row", flexWrap: "wrap"}, mainStyles.mb5]}>
           {shortWeekDays.map((day, idx) => (
-            <Button key={day} onPress={() => setCurrentWeekDay(weekDays[idx])}
-                    text={day} style={{width: 50, marginHorizontal: 5}}
-                    type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
+            <Button
+              key={day}
+              onPress={() => setCurrentWeekDay(weekDays[idx])}
+              text={day}
+              style={{width: 50, marginHorizontal: 5}}
+              type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
             />
           ))}
         </View>
 
         <View style={{alignItems: "center"}}>
-          {timetableDays && (
+          {weekDaysWithLessons && (
             <View style={{width: "100%", alignItems: "center"}}>
-              <Text style={[mainStyles.h1, mainStyles.textSecondary, mainStyles.mb4]}>High week</Text>
+              <Text
+                style={[
+                  mainStyles.h1,
+                  mainStyles.textSecondary,
+                  mainStyles.mb4,
+                ]}>
+                High week
+              </Text>
               {highWeekDayLessons}
-              <Text style={[mainStyles.h1, mainStyles.textSecondary, mainStyles.mt5, mainStyles.mb4]}>Low week</Text>
+              <Text
+                style={[
+                  mainStyles.h1,
+                  mainStyles.textSecondary,
+                  mainStyles.mt5,
+                  mainStyles.mb4,
+                ]}>
+                Low week
+              </Text>
               {lowWeekDayLessons}
             </View>
           )}

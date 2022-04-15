@@ -15,7 +15,7 @@ const StartScreen = ({navigation}) => {
     if (!authLoading) {
       if (authStatus) {
         if (user.groupId) {
-          navigation.navigate("Timetable");
+          navigation.navigate("Timetables");
         } else {
           navigation.navigate("NewGroup");
         }

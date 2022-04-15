@@ -8,6 +8,7 @@ import Auth from "./src/screens/Auth";
 import Registration from "./src/screens/Registration";
 import NewGroup from "./src/screens/NewGroup";
 import Timetable from "./src/screens/Timetable";
+import Timetables from "./src/screens/Timetables";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export default function App() {
           <Stack.Screen name="Auth" component={Auth} />
           <Stack.Screen name="Registration" component={Registration} />
           <Stack.Screen name="NewGroup" component={NewGroup} />
+          <Stack.Screen name="Timetables" component={Timetables} />
           <Stack.Screen name="Timetable" component={Timetable} />
         </Stack.Navigator>
       </NavigationContainer>

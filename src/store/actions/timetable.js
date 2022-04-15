@@ -1,31 +1,31 @@
-import {fetchTimetable} from "../../api/timetable";
+import {fetchTimetables} from "../../api/timetable";
 import {
-  SUCCESS_GET_TIMETABLE,
-  FAIL_GET_TIMETABLE,
+  SUCCESS_GET_TIMETABLES,
+  FAIL_GET_TIMETABLES,
 } from "../actionTypes/timetable";
 
-export const successGetTimetable = timetable => {
+export const successGetTimetables = timetables => {
   return {
-    type: SUCCESS_GET_TIMETABLE,
-    payload: timetable,
+    type: SUCCESS_GET_TIMETABLES,
+    payload: timetables,
   };
 };
 
-export const failGetTimetable = errors => {
+export const failGetTimetables = errors => {
   return {
-    type: FAIL_GET_TIMETABLE,
+    type: FAIL_GET_TIMETABLES,
     payload: errors,
   };
 };
 
-export const getTimetable = timetableId => {
+export const getTimetables = () => {
   return async (dispatch, getState) => {
-    fetchTimetable(getState().auth.accessToken, timetableId)
+    fetchTimetables(getState().auth.accessToken)
       .then(res => {
-        dispatch(successGetTimetable(res.data));
+        dispatch(successGetTimetables(res.data));
       })
       .catch(() => {
-        dispatch(failGetTimetable(["Ошибка при получении расписания"]));
+        dispatch(failGetTimetables(["Ошибка при получении расписания"]));
       });
   };
 };
