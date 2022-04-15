@@ -63,7 +63,7 @@ const InputPicker = ({
 };
 
 InputPicker.propTypes = {
-  value: PropTypes.any.isRequired,
+  value: PropTypes.any,
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   invalid: PropTypes.bool,

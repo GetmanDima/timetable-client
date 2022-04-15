@@ -2,11 +2,11 @@ import {getAuthHost} from "./index";
 
 export const requestCreateGroup = (
   accessToken,
-  directionId,
+  universityId,
   {name, courseNumber, admissionYear},
 ) => {
   const $host = getAuthHost(accessToken);
-  return $host.post(`/v1/directions/${directionId}/groups`, {
+  return $host.post(`/v1/universities/${universityId}/groups`, {
     name,
     courseNumber,
     admissionYear,

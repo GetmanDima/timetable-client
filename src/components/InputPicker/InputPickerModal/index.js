@@ -117,7 +117,7 @@ const InputPickerModal = ({
 
 InputPickerModal.propTypes = {
   visible: PropTypes.bool,
-  value: PropTypes.any.isRequired,
+  value: PropTypes.any,
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   setVisible: PropTypes.func.isRequired,

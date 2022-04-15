@@ -10,9 +10,6 @@ import Modal from "../../components/Modal";
 import mainStyles from "../../styles/styles";
 import {requestCreateUniversity, fetchUniversities} from "../../api/university";
 import {useDispatch, useSelector} from "react-redux";
-import {requestCreateFaculty, fetchFaculties} from "../../api/faculty";
-import {requestCreateDepartment, fetchDepartments} from "../../api/department";
-import {requestCreateDirection, fetchDirections} from "../../api/direction";
 import {requestCreateGroup} from "../../api/group";
 import {logout} from "../../store/actions/auth";
 
@@ -46,28 +43,14 @@ const NewGroupScreen = () => {
 
   const {control, handleSubmit, watch} = useForm({
     mode: "onTouched",
-    defaultValues: {
-      university: "",
-      faculty: "",
-      department: "",
-      direction: "",
-      group: "",
-      courseNumber: "",
-      admissionYear: "",
-    },
   });
 
-  const [universityId, facultyId, departmentId, directionId] = watch([
-    "university",
-    "faculty",
-    "department",
-    "direction",
-  ]);
+  const universityId = watch("universityId");
 
   const onSubmit = data => {
     setLoading(true);
-    requestCreateGroup(accessToken, directionId, {
-      name: data.group,
+    requestCreateGroup(accessToken, universityId, {
+      name: data.groupName,
       courseNumber: data.courseNumber,
       admissionYear: data.admissionYear,
     })
@@ -76,9 +59,9 @@ const NewGroupScreen = () => {
         setLoading(false);
         setErrors([]);
       })
-      .catch(() => {
+      .catch(e => {
         setLoading(false);
-        setErrors(["Ошибка создания группы"]);
+        setErrors([e.message]);
       });
 
     Keyboard.dismiss();
@@ -95,40 +78,6 @@ const NewGroupScreen = () => {
       });
     });
   };
-
-  const newItemModalNameInputs = [
-    {
-      name: "name",
-      label: "Аббревиатура",
-      defaultValue: "",
-      rules: {
-        required: "Необходимо заполнить",
-        minLength: {
-          value: 3,
-          message: "Минимальная длина 3",
-        },
-        maxLength: {
-          value: 100,
-          message: "Максимальная длина 100",
-        },
-      },
-    },
-    {
-      name: "fullName",
-      label: "Полное название",
-      defaultValue: "",
-      rules: {
-        minLength: {
-          value: 3,
-          message: "Минимальная длина 3",
-        },
-        maxLength: {
-          value: 100,
-          message: "Максимальная длина 100",
-        },
-      },
-    },
-  ];
 
   return (
     <SafeAreaView>
@@ -163,14 +112,44 @@ const NewGroupScreen = () => {
           </Text>
           <InputPickerWithCreatorControl
             control={control}
-            name="university"
+            name="universityId"
             label="Университет"
             rules={{
               required: "Необходимо заполнить",
             }}
             newItemModalHeader={"Добавить университет"}
             newItemModalInputs={[
-              ...newItemModalNameInputs,
+              {
+                name: "name",
+                label: "Аббревиатура",
+                defaultValue: "",
+                rules: {
+                  required: "Необходимо заполнить",
+                  minLength: {
+                    value: 3,
+                    message: "Минимальная длина 3",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                },
+              },
+              {
+                name: "fullName",
+                label: "Полное название",
+                defaultValue: "",
+                rules: {
+                  minLength: {
+                    value: 3,
+                    message: "Минимальная длина 3",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                },
+              },
               {
                 name: "address",
                 label: "Адрес",
@@ -197,73 +176,9 @@ const NewGroupScreen = () => {
             }}
             style={mainStyles.mt3}
           />
-          <InputPickerWithCreatorControl
-            control={control}
-            name="faculty"
-            label="Факультет"
-            rules={{
-              required: "Необходимо заполнить",
-            }}
-            newItemModalHeader={"Добавить факультет"}
-            newItemModalInputs={newItemModalNameInputs}
-            disabled={universityId === ""}
-            fetchRecommendations={(...params) => {
-              return prepareRecommendationsForInput(
-                fetchFaculties(accessToken, universityId, ...params),
-              );
-            }}
-            requestCreateItem={(...params) => {
-              return requestCreateFaculty(accessToken, universityId, ...params);
-            }}
-            style={mainStyles.mt3}
-          />
-          <InputPickerWithCreatorControl
-            control={control}
-            name="department"
-            label="Кафедра"
-            rules={{
-              required: "Необходимо заполнить",
-            }}
-            newItemModalHeader={"Добавить кафедру"}
-            newItemModalInputs={newItemModalNameInputs}
-            disabled={facultyId === ""}
-            fetchRecommendations={(...params) => {
-              return prepareRecommendationsForInput(
-                fetchDepartments(accessToken, facultyId, ...params),
-              );
-            }}
-            requestCreateItem={(...params) => {
-              return requestCreateDepartment(accessToken, facultyId, ...params);
-            }}
-            style={mainStyles.mt3}
-          />
-          <InputPickerWithCreatorControl
-            control={control}
-            name="direction"
-            label="Направление"
-            rules={{
-              required: "Необходимо заполнить",
-            }}
-            newItemModalHeader={"Добавить направление"}
-            newItemModalInputs={newItemModalNameInputs}
-            disabled={departmentId === ""}
-            fetchRecommendations={(...params) => {
-              return prepareRecommendationsForInput(
-                fetchDirections(accessToken, departmentId, ...params),
-              );
-            }}
-            requestCreateItem={(...params) => {
-              return requestCreateDirection(
-                accessToken,
-                departmentId,
-                ...params,
-              );
-            }}
-            style={mainStyles.mt3}
-          />
           <FlatInputControl
             control={control}
-            name="group"
+            name="groupName"
             label="Группа"
             rules={{
               required: "Необходимо заполнить",
@@ -277,7 +192,7 @@ const NewGroupScreen = () => {
               },
             }}
             style={mainStyles.mt3}
-            editable={directionId !== ""}
+            editable={universityId !== ""}
           />
           <FlatInputControl
             control={control}
@@ -294,7 +209,7 @@ const NewGroupScreen = () => {
               },
             }}
             style={mainStyles.mt3}
-            editable={directionId !== ""}
+            editable={universityId !== ""}
           />
           <FlatInputControl
             control={control}
@@ -311,7 +226,7 @@ const NewGroupScreen = () => {
               },
             }}
             style={mainStyles.mt3}
-            editable={directionId !== ""}
+            editable={universityId !== ""}
           />
           <Button
             text="Создать группу"

@@ -23,13 +23,11 @@ const FlatInput = ({
 
   const labelTopPositionAnim = useRef(
     new Animated.Value(
-      value === "" ? defaultLabelTopPosition : focusedLabelTopPosition,
+      value ? focusedLabelTopPosition : defaultLabelTopPosition,
     ),
   ).current;
   const labelFontSizeAnim = useRef(
-    new Animated.Value(
-      value === "" ? defaultLabelFontSize : focusedLabelFontSize,
-    ),
+    new Animated.Value(value ? focusedLabelFontSize : defaultLabelFontSize),
   ).current;
   const labelColorAnim = useRef(new Animated.Value(0)).current;
 
@@ -63,7 +61,7 @@ const FlatInput = ({
   const onBlurAnimate = () => {
     setFocus(false);
 
-    if (value === "") {
+    if (!value) {
       Animated.timing(labelTopPositionAnim, {
         toValue: defaultLabelTopPosition,
         duration: 200,
@@ -121,7 +119,7 @@ const FlatInput = ({
 };
 
 FlatInput.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   label: PropTypes.string.isRequired,
   invalid: PropTypes.bool,
   autoFocus: PropTypes.bool,
