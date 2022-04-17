@@ -102,6 +102,7 @@ const RegistrationScreen = ({navigation}) => {
           </Text>
           <FlatPickerControl
             items={[
+              {label: "", value: null},
               {label: "Leader", value: "leader"},
               {label: "Student", value: "student"},
             ]}
@@ -200,7 +201,7 @@ const RegistrationScreen = ({navigation}) => {
             onPress={handleSubmit(onSubmit)}
             type={"primary"}
           />
-          <View style={[styles.authWrapper, mainStyles.mt5]}>
+          <View style={[styles.alternative, mainStyles.mt5]}>
             <Text
               style={[
                 mainStyles.smallText,

@@ -9,6 +9,7 @@ import Registration from "./src/screens/Registration";
 import NewGroup from "./src/screens/NewGroup";
 import Timetable from "./src/screens/Timetable";
 import Timetables from "./src/screens/Timetables";
+import ChooseTimetable from "./src/screens/ChooseTimetable";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="Start" component={Start} />
+          <Stack.Screen name="ChooseTimetable" component={ChooseTimetable} />
           <Stack.Screen name="Auth" component={Auth} />
           <Stack.Screen name="Registration" component={Registration} />
           <Stack.Screen name="NewGroup" component={NewGroup} />

@@ -1,6 +1,6 @@
 import {getAuthHost} from "./index";
 
-export const fetchUniversities = (accessToken, {search}) => {
+export const fetchUniversities = (accessToken, {search} = {}) => {
   const $host = getAuthHost(accessToken);
   return $host.get("/v1/universities", {params: {search}});
 };

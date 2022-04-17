@@ -102,7 +102,7 @@ const AuthScreen = () => {
           onPress={handleSubmit(onSubmit)}
           type="primary"
         />
-        <View style={[styles.registrationWrapper, mainStyles.mt5]}>
+        <View style={[styles.alternative, mainStyles.mt5]}>
           <Text
             style={[
               mainStyles.smallText,
@@ -112,6 +112,17 @@ const AuthScreen = () => {
             Не зарегистированы?
           </Text>
           <Link to="/Registration" text="Зарегистрироваться" />
+        </View>
+        <View style={[styles.alternative, mainStyles.mt2]}>
+          <Text
+            style={[
+              mainStyles.smallText,
+              mainStyles.textSecondary,
+              mainStyles.mr1,
+            ]}>
+            или перейти к
+          </Text>
+          <Link to="/ChooseTimetable" text="Выбору расписания" />
         </View>
       </View>
     </SafeAreaView>

@@ -12,3 +12,10 @@ export const requestCreateGroup = (
     admissionYear,
   });
 };
+
+export const fetchGroups = (accessToken, universityId, {search} = {}) => {
+  const $host = getAuthHost(accessToken);
+  return $host.get(`/v1/universities/${universityId}/groups`, {
+    params: {search},
+  });
+};

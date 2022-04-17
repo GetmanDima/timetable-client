@@ -20,7 +20,7 @@ const StartScreen = ({navigation}) => {
           navigation.navigate("NewGroup");
         }
       } else {
-        navigation.navigate("Auth");
+        navigation.navigate("ChooseTimetable");
       }
     }
   }, [authLoading, authStatus, user.groupId]);
