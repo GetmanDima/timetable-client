@@ -2,7 +2,7 @@ import {useRef, useState, useEffect, useMemo} from "react";
 import {View, Animated} from "react-native";
 import PropTypes from "prop-types";
 import {Picker} from "@react-native-picker/picker";
-import {primaryColor, secondaryColor} from "../../styles/constants";
+import {primaryColor, whiteColor} from "../../styles/constants";
 import styles from "./styles";
 
 const FlatPicker = ({
@@ -54,7 +54,7 @@ const FlatPicker = ({
   const labelColorInterpolation = useRef(
     labelColorAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [secondaryColor, primaryColor],
+      outputRange: [whiteColor, primaryColor],
     }),
   ).current;
 

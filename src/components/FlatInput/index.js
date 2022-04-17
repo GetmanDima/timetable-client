@@ -1,7 +1,7 @@
 import {useRef, useState} from "react";
 import {TextInput, View, Animated} from "react-native";
 import PropTypes from "prop-types";
-import {primaryColor, secondaryColor} from "../../styles/constants";
+import {primaryColor, whiteColor} from "../../styles/constants";
 import styles from "./styles";
 
 const FlatInput = ({
@@ -34,7 +34,7 @@ const FlatInput = ({
   const labelColorInterpolation = useRef(
     labelColorAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [secondaryColor, primaryColor],
+      outputRange: [whiteColor, primaryColor],
     }),
   ).current;
 

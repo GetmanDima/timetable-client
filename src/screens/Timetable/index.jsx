@@ -10,24 +10,28 @@ import mainStyles from "../../styles/styles";
 import {weekDays} from "../../constants";
 
 const TimetableScreen = ({route, navigation}) => {
-  const {timetableId} = route.params;
+  const {timetable} = route.params;
 
   const dispatch = useDispatch();
 
   const {weekDaysWithLessons, loading, errors} = useSelector(state => {
     return {
       weekDaysWithLessons:
-        state.timetableLesson.weekDaysWithLessons[timetableId],
-      loading: state.timetableLesson.loadings[timetableId],
-      errors: state.timetableLesson.errors[timetableId],
+        state.timetableLesson.weekDaysWithLessons[timetable.id],
+      loading: state.timetableLesson.loadings[timetable.id],
+      errors: state.timetableLesson.errors[timetable.id],
     };
   });
 
   const [currentWeekDay, setCurrentWeekDay] = useState("monday");
 
   useEffect(() => {
+    navigation.setOptions({
+      title: `Расписание ${timetable.name}`,
+    });
+
     if (!weekDaysWithLessons) {
-      dispatch(getTimetableLessons(timetableId));
+      dispatch(getTimetableLessons(timetable.id));
     }
   }, []);
 
@@ -88,32 +92,16 @@ const TimetableScreen = ({route, navigation}) => {
   const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={mainStyles.screen}>
       {loading && <Loader />}
       <ScrollView>
-        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-          <Text
-            style={[
-              mainStyles.h1,
-              mainStyles.mb5,
-              {textAlign: "center", color: "#fff"},
-            ]}>
-            Timetable
-          </Text>
-          <Button
-            text="To timetables"
-            style={{height: 50, width: 150}}
-            onPress={() => navigation.navigate("Timetables")}
-          />
-        </View>
-        <View
-          style={[{flexDirection: "row", flexWrap: "wrap"}, mainStyles.mb5]}>
+        <View style={styles.weekDays}>
           {shortWeekDays.map((day, idx) => (
             <Button
               key={day}
               onPress={() => setCurrentWeekDay(weekDays[idx])}
               text={day}
-              style={{width: 50, marginHorizontal: 5}}
+              style={styles.weekDay}
               type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
             />
           ))}
@@ -121,25 +109,10 @@ const TimetableScreen = ({route, navigation}) => {
 
         <View style={{alignItems: "center"}}>
           {weekDaysWithLessons && (
-            <View style={{width: "100%", alignItems: "center"}}>
-              <Text
-                style={[
-                  mainStyles.h1,
-                  mainStyles.textSecondary,
-                  mainStyles.mb4,
-                ]}>
-                High week
-              </Text>
+            <View>
+              <Text style={styles.weekTypeText}>High week</Text>
               {highWeekDayLessons}
-              <Text
-                style={[
-                  mainStyles.h1,
-                  mainStyles.textSecondary,
-                  mainStyles.mt5,
-                  mainStyles.mb4,
-                ]}>
-                Low week
-              </Text>
+              <Text style={styles.weekTypeText}>Low week</Text>
               {lowWeekDayLessons}
             </View>
           )}

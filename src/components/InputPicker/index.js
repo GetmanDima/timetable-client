@@ -2,7 +2,6 @@ import {useState} from "react";
 import {Pressable, View, Text} from "react-native";
 import PropTypes from "prop-types";
 import InputPickerModal from "./InputPickerModal";
-import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
 const InputPicker = ({
@@ -53,7 +52,7 @@ const InputPicker = ({
                 invalid && styles.inputError,
                 disabled && styles.disabledInput,
               ]}>
-              <Text style={mainStyles.text}>{name}</Text>
+              <Text style={styles.name}>{name}</Text>
             </View>
           </View>
         </Pressable>

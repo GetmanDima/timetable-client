@@ -3,9 +3,8 @@ import {ScrollView, View, Text, Pressable} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useSelector, useDispatch} from "react-redux";
 import Loader from "../../components/Loader";
-import styles from "./styles";
-import mainStyles from "../../styles/styles";
 import {getTimetables} from "../../store/actions/timetable";
+import styles from "./styles";
 
 const Timetables = ({navigation}) => {
   const dispatch = useDispatch();
@@ -25,19 +24,11 @@ const Timetables = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       {loading && <Loader />}
       <ScrollView>
-        <Text
-          style={[
-            mainStyles.h1,
-            mainStyles.mb5,
-            {textAlign: "center", color: "#fff"},
-          ]}>
-          Timetables
-        </Text>
         {timetables.map(timetable => (
           <Pressable
             key={timetable.id}
             onPress={() =>
-              navigation.navigate("Timetable", {timetableId: timetable.id})
+              navigation.navigate("Timetable", {timetable: timetable})
             }>
             <View style={styles.timetable}>
               <Text style={styles.text}>{timetable.name}</Text>

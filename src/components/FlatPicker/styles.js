@@ -1,10 +1,9 @@
 import {StyleSheet} from "react-native";
 import {
-  blackColor,
   dangerColor,
   primaryColor,
   secondaryColor,
-  lightSecondaryColor,
+  whiteColor,
 } from "../../styles/constants";
 
 export default StyleSheet.create({
@@ -15,12 +14,12 @@ export default StyleSheet.create({
     color: dangerColor,
   },
   disabledLabel: {
-    color: lightSecondaryColor,
+    color: secondaryColor,
   },
   pickerWrapper: {
     width: "100%",
     paddingTop: 15,
-    borderBottomColor: secondaryColor,
+    borderBottomColor: whiteColor,
     borderBottomWidth: 2,
   },
   pickerWrapperError: {
@@ -31,17 +30,17 @@ export default StyleSheet.create({
     borderBottomWidth: 3,
   },
   disabledPickerWrapper: {
-    borderBottomColor: lightSecondaryColor,
+    borderBottomColor: secondaryColor,
     borderBottomWidth: 2,
   },
   picker: {
     width: "94%",
     marginLeft: 10,
     paddingHorizontal: 0,
-    color: blackColor,
+    color: whiteColor,
     transform: [{scaleX: 1.14}, {scaleY: 1.14}],
   },
   disabledPicker: {
-    color: lightSecondaryColor,
+    color: secondaryColor,
   },
 });

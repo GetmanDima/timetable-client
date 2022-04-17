@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native";
-import {primaryColor} from "../../../../styles/constants";
+import {primaryColor, whiteColor} from "../../../../styles/constants";
 
 export default StyleSheet.create({
   wrapper: {
@@ -15,5 +15,6 @@ export default StyleSheet.create({
   },
   itemText: {
     fontSize: 18,
+    color: whiteColor,
   },
 });

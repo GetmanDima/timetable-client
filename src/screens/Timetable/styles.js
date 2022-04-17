@@ -1,10 +1,21 @@
 import {StyleSheet} from "react-native";
+import {lightColor, h1FontSize} from "../../styles/constants";
 
 export default StyleSheet.create({
-  container: {
-    backgroundColor: "#081320",
+  weekDays: {
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
-  text: {
-    color: "#FFF",
+  weekDay: {
+    width: 50,
+    marginHorizontal: 5,
+  },
+  weekTypeText: {
+    marginTop: 50,
+    marginBottom: 30,
+    textAlign: "center",
+    color: lightColor,
+    fontSize: h1FontSize,
+    fontWeight: "bold",
   },
 });

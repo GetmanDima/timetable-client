@@ -1,11 +1,10 @@
 import {StyleSheet} from "react-native";
 import {
-  blackColor,
   dangerColor,
   primaryColor,
   secondaryColor,
-  lightSecondaryColor,
   textFontSize,
+  whiteColor,
 } from "../../styles/constants";
 
 export default StyleSheet.create({
@@ -13,7 +12,7 @@ export default StyleSheet.create({
     position: "absolute",
   },
   disabledLabel: {
-    color: lightSecondaryColor,
+    color: secondaryColor,
   },
   labelError: {
     color: dangerColor,
@@ -24,14 +23,14 @@ export default StyleSheet.create({
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderBottomWidth: 2,
-    borderBottomColor: secondaryColor,
+    borderBottomColor: whiteColor,
     paddingTop: 25,
     paddingBottom: 10,
     fontSize: textFontSize,
-    color: blackColor,
+    color: whiteColor,
   },
   disabledInput: {
-    borderBottomColor: lightSecondaryColor,
+    borderBottomColor: secondaryColor,
   },
   inputError: {
     borderBottomColor: dangerColor,

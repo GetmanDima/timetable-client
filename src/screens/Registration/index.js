@@ -1,5 +1,13 @@
 import {useState, useEffect} from "react";
-import {View, ScrollView, Text, Keyboard} from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useForm} from "react-hook-form";
 import {EMAIL_REGEX} from "../../constants";
@@ -71,150 +79,151 @@ const RegistrationScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView>
-      {loading && <Loader />}
-      <Modal
-        header="Успешная регистрация"
-        body="Вы успешно зарегистрировались"
-        onPress={() => {
-          navigation.navigate("Auth");
-          setStatus(false);
-          setLoading(false);
-          setErrors([]);
-          setSuccessModalVisible(false);
-        }}
-        visible={successModalVisible}
-      />
-      <Modal
-        header="Ошибка регистрации"
-        body={errors.join("\n")}
-        type="danger"
-        visible={errorModalVisible}
-        onPress={() => {
-          setErrorModalVisible(false);
-          //setErrors([]);
-        }}
-      />
-      <ScrollView>
-        <View style={mainStyles.containerCenter}>
-          <Text style={[mainStyles.h1, mainStyles.textPrimary, mainStyles.mb4]}>
-            Registration
-          </Text>
-          <FlatPickerControl
-            items={[
-              {label: "", value: null},
-              {label: "Leader", value: "leader"},
-              {label: "Student", value: "student"},
-            ]}
-            control={control}
-            name="type"
-            label="Тип пользователя"
-            rules={{
-              required: "Необходимо заполнить",
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={mainStyles.screen}>
+          {loading && <Loader />}
+          <Modal
+            header="Успешная регистрация"
+            body="Вы успешно зарегистрировались"
+            onPress={() => {
+              navigation.navigate("Auth");
+              setStatus(false);
+              setLoading(false);
+              setErrors([]);
+              setSuccessModalVisible(false);
             }}
-            style={mainStyles.mt3}
-            onChange={v => {
-              v === "leader" ? setDisabledCode(true) : setDisabledCode(false);
+            visible={successModalVisible}
+          />
+          <Modal
+            header="Ошибка регистрации"
+            body={errors.join("\n")}
+            type="danger"
+            visible={errorModalVisible}
+            onPress={() => {
+              setErrorModalVisible(false);
             }}
           />
-          <FlatInputControl
-            control={control}
-            name="email"
-            label="email"
-            rules={{
-              required: "Необходимо заполнить",
-              maxLength: {
-                value: 100,
-                message: "Максимальная длина 100",
-              },
-              pattern: {
-                value: EMAIL_REGEX,
-                message: "Не является email",
-              },
-            }}
-            style={mainStyles.mt3}
-          />
-          <FlatInputControl
-            control={control}
-            rules={{
-              required: "Необходимо заполнить",
-              minLength: {
-                value: 3,
-                message: "Минимальная длина 3",
-              },
-              maxLength: {
-                value: 100,
-                message: "Максимальная длина 100",
-              },
-            }}
-            name="password"
-            label="Пароль"
-            style={mainStyles.mt3}
-          />
-          <FlatInputControl
-            control={control}
-            rules={{
-              maxLength: {
-                value: 100,
-                message: "Максимальная длина 100",
-              },
-            }}
-            name="firstName"
-            label="Имя"
-            style={mainStyles.mt3}
-          />
-          <FlatInputControl
-            control={control}
-            rules={{
-              maxLength: {
-                value: 100,
-                message: "Максимальная длина 100",
-              },
-            }}
-            name="lastName"
-            label="Фамилия"
-            style={mainStyles.mt3}
-          />
-          <FlatInputControl
-            control={control}
-            rules={{
-              validate: v => {
-                if (v === "") {
-                  return disabledCode ? true : "Необходимо заполнить";
-                }
+          <ScrollView>
+            <View style={styles.form}>
+              <FlatPickerControl
+                items={[
+                  {label: "", value: null},
+                  {label: "Leader", value: "leader"},
+                  {label: "Student", value: "student"},
+                ]}
+                control={control}
+                name="type"
+                label="Тип пользователя"
+                rules={{
+                  required: "Необходимо заполнить",
+                }}
+                onChange={v => {
+                  v === "leader"
+                    ? setDisabledCode(true)
+                    : setDisabledCode(false);
+                }}
+              />
+              <FlatInputControl
+                control={control}
+                name="email"
+                label="email"
+                rules={{
+                  required: "Необходимо заполнить",
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                  pattern: {
+                    value: EMAIL_REGEX,
+                    message: "Не является email",
+                  },
+                }}
+                style={mainStyles.mt3}
+              />
+              <FlatInputControl
+                control={control}
+                rules={{
+                  required: "Необходимо заполнить",
+                  minLength: {
+                    value: 3,
+                    message: "Минимальная длина 3",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                }}
+                name="password"
+                label="Пароль"
+                style={mainStyles.mt3}
+              />
+              <FlatInputControl
+                control={control}
+                rules={{
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                }}
+                name="firstName"
+                label="Имя"
+                style={mainStyles.mt3}
+              />
+              <FlatInputControl
+                control={control}
+                rules={{
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                }}
+                name="lastName"
+                label="Фамилия"
+                style={mainStyles.mt3}
+              />
+              <FlatInputControl
+                control={control}
+                rules={{
+                  validate: v => {
+                    if (v === "") {
+                      return disabledCode ? true : "Необходимо заполнить";
+                    }
 
-                return true;
-              },
-              maxLength: {
-                value: 100,
-                message: "Максимальная длина 100",
-              },
-            }}
-            name="code"
-            label="Код группы"
-            style={mainStyles.mt3}
-            editable={!disabledCode}
-          />
-          <Button
-            text={"Зарегистрироваться"}
-            style={mainStyles.mt5}
-            onPress={handleSubmit(onSubmit)}
-            type={"primary"}
-          />
-          <View style={[styles.alternative, mainStyles.mt5]}>
-            <Text
-              style={[
-                mainStyles.smallText,
-                mainStyles.textSecondary,
-                mainStyles.mr1,
-              ]}>
-              Уже зарегистрированы?
-            </Text>
-            <Link to="/Auth" text="Вход" style={styles.authLink} />
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+                    return true;
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                }}
+                name="code"
+                label="Код группы"
+                style={mainStyles.mt3}
+                editable={!disabledCode}
+              />
+              <Button
+                text={"Зарегистрироваться"}
+                style={styles.submit}
+                onPress={handleSubmit(onSubmit)}
+                type={"primary"}
+              />
+              <View style={styles.alternative}>
+                <Text style={styles.alternativeText}>
+                  Уже зарегистрированы?
+                </Text>
+                <Link
+                  to="/Auth"
+                  text="Вход"
+                  textStyle={styles.alternativeLink}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

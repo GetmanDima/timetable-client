@@ -5,11 +5,4 @@ export default StyleSheet.create({
   form: {
     alignItems: "center",
   },
-  alternative: {
-    flexDirection: "row",
-    marginTop: 60,
-  },
-  alternativeLink: {
-    color: lightPrimaryColor,
-  },
 });

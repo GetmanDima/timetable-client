@@ -14,6 +14,15 @@ let windowHeight = Dimensions.get("window").height;
 
 export default StyleSheet.create({
   ...marginStyles,
+  screen: {
+    minHeight: "100%",
+    paddingTop: 20,
+    paddingBottom: 50,
+    backgroundColor: darkColor,
+  },
+  screenCenter: {
+    justifyContent: "center",
+  },
   containerCenter: {
     paddingVertical: 50,
     alignItems: "center",

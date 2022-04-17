@@ -88,21 +88,13 @@ const NewItemModal = ({
           }}>
           <View style={styles.modal}>
             <ScrollView style={{width: "100%"}}>
-              <View style={{alignItems: "center"}}>
+              <View style={styles.form}>
                 <Pressable
                   style={styles.closeButton}
                   onPress={() => setVisible(false)}>
                   <Text style={styles.closeButtonText}>X</Text>
                 </Pressable>
-                <Text
-                  style={[
-                    mainStyles.h1,
-                    mainStyles.textPrimary,
-                    mainStyles.mb3,
-                    mainStyles.mt5,
-                  ]}>
-                  {header}
-                </Text>
+                <Text style={styles.header}>{header}</Text>
                 {flatInputControls}
                 <Button
                   text={"Добавить"}

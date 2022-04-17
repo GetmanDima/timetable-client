@@ -1,12 +1,26 @@
 import {StyleSheet} from "react-native";
-import {primaryColor, whiteColor} from "../../../styles/constants";
+import {
+  primaryColor,
+  whiteColor,
+  lightDarkColor,
+  h1FontSize,
+} from "../../../styles/constants";
 
 export default StyleSheet.create({
   modal: {
-    backgroundColor: whiteColor,
+    backgroundColor: lightDarkColor,
     height: "100%",
     width: "100%",
     alignItems: "center",
+  },
+  form: {
+    alignItems: "center",
+  },
+  header: {
+    fontSize: h1FontSize,
+    color: whiteColor,
+    marginTop: 50,
+    marginBottom: 30,
   },
   closeButton: {
     position: "absolute",

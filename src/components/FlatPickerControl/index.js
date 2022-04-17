@@ -67,7 +67,10 @@ FlatPickerControl.propTypes = {
   autoFocus: PropTypes.bool,
   enabled: PropTypes.bool,
   onChange: PropTypes.func,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
 };
 
 FlatPickerControl.defaultProps = {
@@ -76,10 +79,7 @@ FlatPickerControl.defaultProps = {
   autoFocus: false,
   enabled: true,
   onChange: () => {},
-  style: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.arrayOf(PropTypes.object),
-  ]),
+  style: {},
 };
 
 export default FlatPickerControl;

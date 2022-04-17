@@ -2,13 +2,14 @@ import {StyleSheet} from "react-native";
 import {
   dangerColor,
   secondaryColor,
-  lightSecondaryColor,
+  textFontSize,
+  whiteColor,
 } from "../../styles/constants";
 
 export default StyleSheet.create({
   label: {
     position: "absolute",
-    color: secondaryColor,
+    color: whiteColor,
   },
   filledInputLabel: {
     top: 0,
@@ -22,7 +23,7 @@ export default StyleSheet.create({
     color: dangerColor,
   },
   disabledLabel: {
-    color: lightSecondaryColor,
+    color: secondaryColor,
   },
   input: {
     width: "100%",
@@ -30,7 +31,7 @@ export default StyleSheet.create({
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderBottomWidth: 2,
-    borderBottomColor: secondaryColor,
+    borderBottomColor: whiteColor,
     paddingTop: 25,
     paddingBottom: 10,
   },
@@ -38,6 +39,10 @@ export default StyleSheet.create({
     borderBottomColor: dangerColor,
   },
   disabledInput: {
-    borderBottomColor: lightSecondaryColor,
+    borderBottomColor: secondaryColor,
+  },
+  name: {
+    fontSize: textFontSize,
+    color: whiteColor,
   },
 });

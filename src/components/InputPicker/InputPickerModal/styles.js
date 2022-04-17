@@ -1,7 +1,7 @@
 import {StyleSheet} from "react-native";
 import {
   primaryColor,
-  lightPrimaryColor,
+  lightDarkColor,
 } from "../../../styles/constants";
 
 export default StyleSheet.create({
@@ -16,7 +16,7 @@ export default StyleSheet.create({
     width: "90%",
     alignItems: "flex-start",
     padding: 20,
-    backgroundColor: lightPrimaryColor,
+    backgroundColor: lightDarkColor,
     borderRadius: 5,
   },
   inputWrapper: {
