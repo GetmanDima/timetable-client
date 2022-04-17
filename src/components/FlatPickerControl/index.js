@@ -11,6 +11,7 @@ const FlatPickerControl = ({
   label,
   rules,
   autoFocus,
+  enabled,
   onChange,
   style,
 }) => {
@@ -29,17 +30,20 @@ const FlatPickerControl = ({
               <FlatPicker
                 items={items}
                 value={value}
+                label={label}
+                invalid={invalid}
+                enabled={enabled}
+                autoFocus={autoFocus}
                 onBlur={onBlur}
                 onChange={v => {
                   onChange(v);
                   defaultOnChange(v);
                 }}
-                invalid={invalid}
-                label={label}
-                autoFocus={autoFocus}
                 style={style}
               />
-              {invalid && <Text style={styles.error}>{error.message}</Text>}
+              {enabled && invalid && (
+                <Text style={styles.error}>{error.message}</Text>
+              )}
             </View>
           );
         }}
@@ -51,17 +55,17 @@ const FlatPickerControl = ({
 FlatPickerControl.propTypes = {
   control: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
-
   items: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.any.isRequired,
+      value: PropTypes.any,
     }),
   ).isRequired,
   value: PropTypes.any,
   label: PropTypes.string.isRequired,
   rules: PropTypes.object,
   autoFocus: PropTypes.bool,
+  enabled: PropTypes.bool,
   onChange: PropTypes.func,
   style: PropTypes.object,
 };
@@ -70,6 +74,7 @@ FlatPickerControl.defaultProps = {
   value: "",
   rules: {},
   autoFocus: false,
+  enabled: true,
   onChange: () => {},
   style: PropTypes.oneOfType([
     PropTypes.object,

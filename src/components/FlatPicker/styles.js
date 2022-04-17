@@ -4,6 +4,7 @@ import {
   dangerColor,
   primaryColor,
   secondaryColor,
+  lightSecondaryColor,
 } from "../../styles/constants";
 
 export default StyleSheet.create({
@@ -12,6 +13,9 @@ export default StyleSheet.create({
   },
   labelError: {
     color: dangerColor,
+  },
+  disabledLabel: {
+    color: lightSecondaryColor,
   },
   pickerWrapper: {
     width: "100%",
@@ -26,11 +30,18 @@ export default StyleSheet.create({
     borderBottomColor: primaryColor,
     borderBottomWidth: 3,
   },
+  disabledPickerWrapper: {
+    borderBottomColor: lightSecondaryColor,
+    borderBottomWidth: 2,
+  },
   picker: {
     width: "94%",
     marginLeft: 10,
     paddingHorizontal: 0,
     color: blackColor,
     transform: [{scaleX: 1.14}, {scaleY: 1.14}],
+  },
+  disabledPicker: {
+    color: lightSecondaryColor,
   },
 });
