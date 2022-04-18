@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useForm} from "react-hook-form";
 import FlatPickerControl from "../../components/FlatPickerControl";
@@ -67,10 +68,32 @@ const ChooseTimetable = ({navigation}) => {
     });
   };
 
-  const onSubmit = data => {
+  useEffect(async () => {
+    try {
+      const lastTimetable = JSON.parse(
+        await AsyncStorage.getItem("lastTimetable"),
+      );
+
+      if (lastTimetable) {
+        navigation.navigate("Timetable", {timetable: lastTimetable});
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  const onSubmit = async data => {
     Keyboard.dismiss();
-    console.log("timetable", data.timetable);
     navigation.navigate("Timetable", {timetable: data.timetable});
+
+    try {
+      await AsyncStorage.setItem(
+        "lastTimetable",
+        JSON.stringify(data.timetable),
+      );
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
