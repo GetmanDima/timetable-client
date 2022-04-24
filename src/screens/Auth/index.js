@@ -38,10 +38,7 @@ const AuthScreen = ({navigation}) => {
     if (!authLoading) {
       if (authStatus) {
         if (user.groupId) {
-          navigation.reset({
-            index: 0,
-            routes: [{name: "Timetables"}],
-          });
+          navigation.navigate("TabNavigation", {screen: "Timetables"});
         } else {
           navigation.reset({
             index: 0,

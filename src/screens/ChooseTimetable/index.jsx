@@ -21,8 +21,9 @@ import styles from "./styles";
 import mainStyles from "../../styles/styles";
 
 const ChooseTimetable = ({navigation}) => {
-  const {accessToken} = useSelector(state => {
+  const {authStatus, accessToken} = useSelector(state => {
     return {
+      authStatus: state.auth.status,
       accessToken: state.auth.accessToken,
     };
   });
@@ -147,20 +148,21 @@ const ChooseTimetable = ({navigation}) => {
               onPress={handleSubmit(onSubmit)}
               type={"primary"}
             />
-
-            <View style={styles.alternative}>
-              <Link
-                to="/Auth"
-                text="Вход"
-                style={mainStyles.mr3}
-                textStyle={styles.alternativeLink}
-              />
-              <Link
-                to="/Registration"
-                text="Регистрация"
-                textStyle={styles.alternativeLink}
-              />
-            </View>
+            {!authStatus && (
+              <View style={styles.alternative}>
+                <Link
+                  to="/Auth"
+                  text="Вход"
+                  style={mainStyles.mr3}
+                  textStyle={styles.alternativeLink}
+                />
+                <Link
+                  to="/Registration"
+                  text="Регистрация"
+                  textStyle={styles.alternativeLink}
+                />
+              </View>
+            )}
           </View>
         </SafeAreaView>
       </TouchableWithoutFeedback>

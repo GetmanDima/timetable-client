@@ -2,11 +2,11 @@ import {Provider} from "react-redux";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import store from "./src/store/store";
+import TabNavigation from "./src/navigation/TabNavigation";
 import Auth from "./src/screens/Auth";
 import Registration from "./src/screens/Registration";
 import NewGroup from "./src/screens/NewGroup";
 import Timetable from "./src/screens/Timetable";
-import Timetables from "./src/screens/Timetables";
 import ChooseTimetable from "./src/screens/ChooseTimetable";
 import {lightDarkColor} from "./src/styles/constants";
 
@@ -31,6 +31,11 @@ export default function App() {
             }}
           />
           <Stack.Screen
+            name="Timetable"
+            component={Timetable}
+            options={{title: "Расписание"}}
+          />
+          <Stack.Screen
             name="Auth"
             component={Auth}
             options={{title: "Авторизация"}}
@@ -46,15 +51,15 @@ export default function App() {
             options={{title: "Создать группу"}}
           />
           <Stack.Screen
+            name="TabNavigation"
+            component={TabNavigation}
+            options={{headerShown: false}}
+          />
+          {/* <Stack.Screen
             name="Timetables"
             component={Timetables}
             options={{title: "Мои расписания"}}
-          />
-          <Stack.Screen
-            name="Timetable"
-            component={Timetable}
-            options={{title: "Расписание"}}
-          />
+          /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
