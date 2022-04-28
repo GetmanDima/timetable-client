@@ -1,9 +1,18 @@
 import {StyleSheet} from "react-native";
-import {lightColor, lightPrimaryColor} from "../../styles/constants";
+import {
+  dangerColor,
+  lightColor,
+  lightPrimaryColor,
+} from "../../styles/constants";
 
 export default StyleSheet.create({
   form: {
     alignItems: "center",
+  },
+  error: {
+    fontSize: 16,
+    color: dangerColor,
+    marginTop: 10,
   },
   alternative: {
     flexDirection: "row",

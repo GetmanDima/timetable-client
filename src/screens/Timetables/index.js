@@ -1,9 +1,9 @@
 import {useEffect} from "react";
 import {ScrollView, View, Text, Pressable} from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
 import {useSelector, useDispatch} from "react-redux";
-import Loader from "../../components/Loader";
+import {Loader} from "../../components";
 import {getTimetables} from "../../store/actions/timetable";
+import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
 const Timetables = ({navigation}) => {
@@ -17,27 +17,29 @@ const Timetables = ({navigation}) => {
   });
 
   useEffect(() => {
-    dispatch(getTimetables());
+    dispatch(getTimetables({parsed: false}));
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={mainStyles.screen}>
       {loading && <Loader />}
       <ScrollView>
-        {timetables.map(timetable => (
-          <Pressable
-            key={timetable.id}
-            onPress={() =>
-              navigation.navigate("Timetable", {timetable: timetable})
-            }>
-            <View style={styles.timetable}>
-              <Text style={styles.text}>{timetable.name}</Text>
-              <Text style={styles.text}>{timetable.creationType}</Text>
-            </View>
-          </Pressable>
-        ))}
+        <View style={[mainStyles.container, styles.container]}>
+          {timetables.map(timetable => (
+            <Pressable
+              key={timetable.id}
+              onPress={() =>
+                navigation.navigate("Timetable", {timetable: timetable})
+              }>
+              <View style={styles.timetable}>
+                <Text style={styles.text}>{timetable.name}</Text>
+                <Text style={styles.text}>{timetable.creationType}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -8,20 +8,21 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {useForm} from "react-hook-form";
+import {useForm, Controller} from "react-hook-form";
 import {EMAIL_REGEX} from "../../constants";
+import {
+  Button,
+  Link,
+  Loader,
+  FlatTextInput,
+  FlatInputPicker,
+  Modal,
+} from "../../components";
 import {requestRegister} from "../../api/registration";
-import Modal from "../../components/Modal";
-import Loader from "../../components/Loader";
-import FlatInputControl from "../../components/FlatInputControl";
-import FlatPickerControl from "../../components/FlatPickerControl";
-import Button from "../../components/Button";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
-import Link from "../../components/Link";
 
-const RegistrationScreen = ({navigation}) => {
+const Registration = ({navigation}) => {
   const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState([]);
@@ -45,11 +46,6 @@ const RegistrationScreen = ({navigation}) => {
     mode: "onTouched",
     defaultValues: {
       type: "leader",
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-      code: "",
     },
   });
 
@@ -71,7 +67,8 @@ const RegistrationScreen = ({navigation}) => {
         setErrors([]);
         reset();
       })
-      .catch(() => {
+      .catch(e => {
+        console.log(e.response.data);
         setLoading(false);
         setErrors(["Ошибка регистрации"]);
         resetField("password");
@@ -79,56 +76,78 @@ const RegistrationScreen = ({navigation}) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={mainStyles.screen}>
-          {loading && <Loader />}
-          <Modal
-            header="Успешная регистрация"
-            body="Вы успешно зарегистрировались"
-            onPress={() => {
-              navigation.navigate("Auth");
-              setStatus(false);
-              setLoading(false);
-              setErrors([]);
-              setSuccessModalVisible(false);
-            }}
-            visible={successModalVisible}
-          />
-          <Modal
-            header="Ошибка регистрации"
-            body={errors.join("\n")}
-            type="danger"
-            visible={errorModalVisible}
-            onPress={() => {
-              setErrorModalVisible(false);
-            }}
-          />
+    <View style={mainStyles.screen}>
+      {loading && <Loader />}
+      <Modal
+        header="Успешная регистрация"
+        body="Вы успешно зарегистрировались"
+        onPress={() => {
+          navigation.navigate("Auth");
+          setStatus(false);
+          setLoading(false);
+          setErrors([]);
+          setSuccessModalVisible(false);
+        }}
+        visible={successModalVisible}
+      />
+      <Modal
+        header="Ошибка регистрации"
+        body={errors.join("\n")}
+        type="danger"
+        visible={errorModalVisible}
+        onPress={() => {
+          setErrorModalVisible(false);
+        }}
+      />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView>
-            <View style={styles.form}>
-              <FlatPickerControl
-                items={[
-                  {label: "", value: null},
-                  {label: "Leader", value: "leader"},
-                  {label: "Student", value: "student"},
-                ]}
+            <View style={[mainStyles.container, mainStyles.form]}>
+              <Controller
                 control={control}
-                name="type"
-                label="Тип пользователя"
+                name={"university"}
                 rules={{
-                  required: "Необходимо заполнить",
+                  required: "Необходимо выбрать",
                 }}
-                onChange={v => {
-                  v === "leader"
-                    ? setDisabledCode(true)
-                    : setDisabledCode(false);
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View style={styles.control}>
+                      <FlatInputPicker
+                        items={[
+                          {label: "Староста", value: "leader"},
+                          {label: "Студент", value: "student"},
+                        ]}
+                        selectedValue={value}
+                        label="Тип пользователя"
+                        invalid={invalid}
+                        onValueChange={value => {
+                          onChange(value);
+
+                          if (value === "student") {
+                            setDisabledCode(false);
+                          } else {
+                            setDisabledCode(true);
+                          }
+                        }}
+                        onBlur={onBlur}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
                 }}
               />
-              <FlatInputControl
+
+              <Controller
                 control={control}
-                name="email"
-                label="email"
+                name={"email"}
                 rules={{
                   required: "Необходимо заполнить",
                   maxLength: {
@@ -140,10 +159,33 @@ const RegistrationScreen = ({navigation}) => {
                     message: "Не является email",
                   },
                 }}
-                style={mainStyles.mt3}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label="Email"
+                        style={mainStyles.mt3}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
-              <FlatInputControl
+
+              <Controller
                 control={control}
+                name={"password"}
                 rules={{
                   required: "Необходимо заполнить",
                   minLength: {
@@ -155,36 +197,99 @@ const RegistrationScreen = ({navigation}) => {
                     message: "Максимальная длина 100",
                   },
                 }}
-                name="password"
-                label="Пароль"
-                style={mainStyles.mt3}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label="Пароль"
+                        style={mainStyles.mt3}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
-              <FlatInputControl
+
+              <Controller
                 control={control}
+                name={"firstName"}
                 rules={{
                   maxLength: {
                     value: 100,
                     message: "Максимальная длина 100",
                   },
                 }}
-                name="firstName"
-                label="Имя"
-                style={mainStyles.mt3}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label="Имя"
+                        style={mainStyles.mt3}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
-              <FlatInputControl
+
+              <Controller
                 control={control}
+                name={"lastName"}
                 rules={{
                   maxLength: {
                     value: 100,
                     message: "Максимальная длина 100",
                   },
                 }}
-                name="lastName"
-                label="Фамилия"
-                style={mainStyles.mt3}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label="Фамилия"
+                        style={mainStyles.mt3}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
-              <FlatInputControl
+
+              <Controller
                 control={control}
+                name={"code"}
                 rules={{
                   validate: v => {
                     if (v === "") {
@@ -198,11 +303,31 @@ const RegistrationScreen = ({navigation}) => {
                     message: "Максимальная длина 100",
                   },
                 }}
-                name="code"
-                label="Код группы"
-                style={mainStyles.mt3}
-                editable={!disabledCode}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label="Код группы"
+                        editable={!disabledCode}
+                        style={mainStyles.mt3}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
+
               <Button
                 text={"Зарегистрироваться"}
                 style={styles.submit}
@@ -221,10 +346,10 @@ const RegistrationScreen = ({navigation}) => {
               </View>
             </View>
           </ScrollView>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
-export default RegistrationScreen;
+export default Registration;

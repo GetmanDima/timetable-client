@@ -1,12 +1,12 @@
 import {useState, useRef} from "react";
 import {View, Modal, Text, Keyboard, Pressable, ScrollView} from "react-native";
+import {SafeAreaView} from "react-native-safe-area-context";
 import PropTypes from "prop-types";
-import {useForm} from "react-hook-form";
-import Button from "../../Button";
-import FlatInputControl from "../../FlatInputControl";
+import {useForm, Controller} from "react-hook-form";
+import Button from "../Button";
+import Loader from "../Loader";
+import FlatTextInput from "../FlatTextInput";
 import styles from "./styles";
-import mainStyles from "../../../styles/styles";
-import Loader from "../../Loader";
 
 const NewItemModal = ({
   visible,
@@ -14,7 +14,6 @@ const NewItemModal = ({
   inputs,
   setVisible,
   setValue,
-  setName,
   requestCreateItem,
   style,
 }) => {
@@ -26,21 +25,36 @@ const NewItemModal = ({
     }, {}),
   ).current;
 
-  const {control, handleSubmit} = useForm({
+  const {control, getValues, handleSubmit} = useForm({
     mode: "onTouched",
     defaultValues,
   });
 
-  const flatInputControls = useRef(
+  const flatInputs = useRef(
     inputs.map(input => (
-      <FlatInputControl
+      <Controller
         control={control}
         key={input.name}
         name={input.name}
-        label={input.label}
-        autoFocus={false}
         rules={input.rules}
-        style={mainStyles.mt3}
+        render={({
+          field: {value, onBlur, onChange},
+          fieldState: {error, invalid},
+        }) => {
+          return (
+            <View>
+              <FlatTextInput
+                value={value}
+                onBlur={onBlur}
+                onChange={onChange}
+                invalid={invalid}
+                label={input.label}
+                style={styles.input}
+              />
+              {invalid && <Text style={styles.error}>{error.message}</Text>}
+            </View>
+          );
+        }}
       />
     )),
   ).current;
@@ -55,19 +69,16 @@ const NewItemModal = ({
     )
       .then(res => {
         if (res.status === 201) {
-          const newUniversityId = res.headers["location"]
-            .split("/")
-            .slice(-1)[0];
+          const id = res.headers["location"].split("/").slice(-1)[0];
 
-          setName(data.name);
-          setValue(newUniversityId);
+          setValue({id, ...getValues(), modalCreatedAt: Date.now()});
         }
 
         setLoading(false);
         setVisible(false);
       })
       .catch(e => {
-        console.log(e);
+        console.warn(e.response.data);
         setLoading(false);
         setVisible(false);
       });
@@ -76,7 +87,7 @@ const NewItemModal = ({
   };
 
   return (
-    <View>
+    <SafeAreaView>
       {loading && <Loader />}
       <View style={style}>
         <Modal
@@ -95,10 +106,10 @@ const NewItemModal = ({
                   <Text style={styles.closeButtonText}>X</Text>
                 </Pressable>
                 <Text style={styles.header}>{header}</Text>
-                {flatInputControls}
+                {flatInputs}
                 <Button
                   text={"Добавить"}
-                  style={mainStyles.mt5}
+                  style={styles.button}
                   onPress={handleSubmit(onSubmit)}
                   type={"primary"}
                 />
@@ -107,7 +118,7 @@ const NewItemModal = ({
           </View>
         </Modal>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -118,13 +129,12 @@ NewItemModal.propTypes = {
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
-      defaultValue: PropTypes.string.isRequired,
+      defaultValue: PropTypes.string,
       rules: PropTypes.object,
     }),
   ).isRequired,
   setVisible: PropTypes.func,
   setValue: PropTypes.func.isRequired,
-  setName: PropTypes.func.isRequired,
   requestCreateItem: PropTypes.func.isRequired,
   style: PropTypes.oneOfType([
     PropTypes.object,

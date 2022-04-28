@@ -4,7 +4,7 @@ import {
   whiteColor,
   lightDarkColor,
   h1FontSize,
-} from "../../../styles/constants";
+} from "../../styles/constants";
 
 export default StyleSheet.create({
   modal: {
@@ -20,7 +20,7 @@ export default StyleSheet.create({
     fontSize: h1FontSize,
     color: whiteColor,
     marginTop: 50,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   closeButton: {
     position: "absolute",
@@ -37,5 +37,11 @@ export default StyleSheet.create({
   closeButtonText: {
     fontSize: 20,
     color: whiteColor,
+  },
+  input: {
+    marginTop: 16,
+  },
+  button: {
+    marginTop: 32,
   },
 });

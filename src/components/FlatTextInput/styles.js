@@ -8,6 +8,9 @@ import {
 } from "../../styles/constants";
 
 export default StyleSheet.create({
+  inputWrapper: {
+    width: 300,
+  },
   label: {
     position: "absolute",
   },

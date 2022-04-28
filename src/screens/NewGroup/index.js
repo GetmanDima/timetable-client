@@ -1,20 +1,22 @@
 import {useEffect, useState} from "react";
-import {View, ScrollView, Keyboard, Text} from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {useForm} from "react-hook-form";
-import InputPickerWithCreatorControl from "../../components/InputPickerWithCreatorControl";
-import FlatInputControl from "../../components/FlatInputControl";
-import Button from "../../components/Button";
-import Loader from "../../components/Loader";
-import Modal from "../../components/Modal";
-import mainStyles from "../../styles/styles";
+import {View, Keyboard, Text} from "react-native";
+import {useForm, Controller} from "react-hook-form";
+import {
+  Button,
+  Loader,
+  FlatTextInput,
+  FlatPicker,
+  Modal,
+  NewItemModal,
+} from "../../components";
 import {requestCreateUniversity, fetchUniversities} from "../../api/university";
 import {useDispatch, useSelector} from "react-redux";
 import {requestCreateGroup} from "../../api/group";
 import {logout} from "../../store/actions/auth";
+import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
-const NewGroupScreen = () => {
+const NewGroup = ({navigation}) => {
   const dispatch = useDispatch();
 
   const {accessToken} = useSelector(state => {
@@ -24,11 +26,51 @@ const NewGroupScreen = () => {
     };
   });
 
+  const limit = 14;
+
   const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState([]);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
+
+  const [universities, setUniversities] = useState([]);
+  const [universityTotalCount, setUniversityTotalCount] = useState(1);
+  const [universityOffset, setUniversityOffset] = useState(0);
+  const [universityLoading, setUniversityLoading] = useState(false);
+  const [newUniversityModalVisible, setNewUniversityModalVisible] =
+    useState(false);
+
+  const prepareResultForPicker = fetchResult => {
+    return fetchResult.then(res => {
+      return {
+        totalCount: res.headers["x-total-count"],
+        data: res.data.map(r => {
+          return {
+            label: r.name,
+            value: r,
+          };
+        }),
+      };
+    });
+  };
+
+  const onUniversityEndReached = () => {
+    if (!universityLoading && universityOffset < universityTotalCount) {
+      setUniversityLoading(true);
+      prepareResultForPicker(
+        fetchUniversities(accessToken, {
+          limit,
+          offset: universityOffset,
+        }),
+      ).then(res => {
+        setUniversities([...universities, ...res.data]);
+        setUniversityTotalCount(res.totalCount);
+        setUniversityOffset(universityOffset + limit);
+        setUniversityLoading(false);
+      });
+    }
+  };
 
   useEffect(() => {
     if (errors.length > 0) {
@@ -42,15 +84,23 @@ const NewGroupScreen = () => {
     }
   }, [status]);
 
-  const {control, handleSubmit, watch} = useForm({
+  const {control, handleSubmit, setValue, watch} = useForm({
     mode: "onTouched",
   });
 
-  const universityId = watch("universityId");
+  const university = watch("university");
+
+  const resetUniversity = () => {
+    setUniversities([]);
+    setUniversityTotalCount(1);
+    setUniversityOffset(0);
+    setUniversityLoading(false);
+    setValue("university", undefined);
+  };
 
   const onSubmit = data => {
     setLoading(true);
-    requestCreateGroup(accessToken, universityId, {
+    requestCreateGroup(accessToken, data.university.id, {
       name: data.groupName,
       courseNumber: data.courseNumber,
       admissionYear: data.admissionYear,
@@ -68,26 +118,64 @@ const NewGroupScreen = () => {
     Keyboard.dismiss();
   };
 
-  const prepareRecommendationsForInput = fetchResult => {
-    return fetchResult.then(res => {
-      return res.data.map(r => {
-        return {
-          name: r.name,
-          text: `${r.name} (${r.fullName || ""})`,
-          value: r.id.toString(),
-        };
-      });
-    });
-  };
+  const newUniversityModalInputs = [
+    {
+      name: "name",
+      label: "Аббревиатура",
+      rules: {
+        required: "Необходимо заполнить",
+        minLength: {
+          value: 3,
+          message: "Минимальная длина 3",
+        },
+        maxLength: {
+          value: 100,
+          message: "Максимальная длина 100",
+        },
+      },
+    },
+    {
+      name: "fullName",
+      label: "Полное название",
+      rules: {
+        minLength: {
+          value: 3,
+          message: "Минимальная длина 3",
+        },
+        maxLength: {
+          value: 100,
+          message: "Максимальная длина 100",
+        },
+      },
+    },
+    {
+      name: "address",
+      label: "Адрес",
+      rules: {
+        minLength: {
+          value: 3,
+          message: "Минимальная длина 3",
+        },
+        maxLength: {
+          value: 100,
+          message: "Максимальная длина 100",
+        },
+      },
+    },
+  ];
 
   return (
-    <SafeAreaView style={[mainStyles.screen, mainStyles.screenCenter]}>
+    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
       <Modal
         header="Создание группы"
         body="Группа успешно создана. Нажимте ОК и заново авторизуйтесь."
         visible={successModalVisible}
         onPress={() => {
           dispatch(logout());
+          navigation.reset({
+            index: 0,
+            routes: [{name: "Auth"}],
+          });
         }}
       />
       <Modal
@@ -99,77 +187,73 @@ const NewGroupScreen = () => {
           setErrorModalVisible(false);
         }}
       />
-      <View style={styles.form}>
+      <View style={[mainStyles.container, mainStyles.form]}>
         {loading && <Loader />}
-        <InputPickerWithCreatorControl
+        <Controller
           control={control}
-          name="universityId"
-          label="Университет"
+          name={"university"}
           rules={{
-            required: "Необходимо заполнить",
+            required: "Необходимо выбрать",
           }}
-          newItemModalHeader={"Добавить университет"}
-          newItemModalInputs={[
-            {
-              name: "name",
-              label: "Аббревиатура",
-              defaultValue: "",
-              rules: {
-                required: "Необходимо заполнить",
-                minLength: {
-                  value: 3,
-                  message: "Минимальная длина 3",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "Максимальная длина 100",
-                },
-              },
-            },
-            {
-              name: "fullName",
-              label: "Полное название",
-              defaultValue: "",
-              rules: {
-                minLength: {
-                  value: 3,
-                  message: "Минимальная длина 3",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "Максимальная длина 100",
-                },
-              },
-            },
-            {
-              name: "address",
-              label: "Адрес",
-              defaultValue: "",
-              rules: {
-                minLength: {
-                  value: 3,
-                  message: "Минимальная длина 3",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "Максимальная длина 100",
-                },
-              },
-            },
-          ]}
-          fetchRecommendations={(...params) => {
-            return prepareRecommendationsForInput(
-              fetchUniversities(accessToken, ...params),
+          render={({
+            field: {value, onBlur, onChange},
+            fieldState: {error, invalid},
+          }) => {
+            return (
+              <View>
+                <NewItemModal
+                  visible={newUniversityModalVisible}
+                  header={"Добавить университет"}
+                  inputs={newUniversityModalInputs}
+                  setVisible={setNewUniversityModalVisible}
+                  setValue={university => {
+                    resetUniversity();
+                    setUniversities([
+                      {
+                        label: university.name,
+                        value: university,
+                        visible: false,
+                      },
+                    ]);
+                    onChange(university);
+                    onBlur();
+                  }}
+                  requestCreateItem={(...params) => {
+                    return requestCreateUniversity(accessToken, ...params);
+                  }}
+                />
+                <View>
+                  <View style={styles.pickerWithCreator}>
+                    <FlatPicker
+                      items={universities}
+                      selectedValue={value}
+                      label="Университет"
+                      invalid={invalid}
+                      loading={universityLoading}
+                      onValueChange={onChange}
+                      onBlur={onBlur}
+                      onEndReached={onUniversityEndReached}
+                      style={{width: 230}}
+                    />
+                    <Button
+                      text="+"
+                      onPress={() => {
+                        setNewUniversityModalVisible(true);
+                      }}
+                      style={styles.pickerWithCreatorButton}
+                    />
+                  </View>
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              </View>
             );
           }}
-          requestCreateItem={(...params) => {
-            return requestCreateUniversity(accessToken, ...params);
-          }}
         />
-        <FlatInputControl
+        <Controller
           control={control}
-          name="groupName"
-          label="Группа"
+          name={"groupName"}
           rules={{
             required: "Необходимо заполнить",
             minLength: {
@@ -181,13 +265,32 @@ const NewGroupScreen = () => {
               message: "Максимальная длина 100",
             },
           }}
-          style={mainStyles.mt3}
-          editable={universityId !== ""}
+          render={({
+            field: {value, onBlur, onChange},
+            fieldState: {error, invalid},
+          }) => {
+            return (
+              <View>
+                <FlatTextInput
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  invalid={invalid}
+                  label="Группа"
+                  editable={university !== undefined}
+                  style={mainStyles.mt3}
+                />
+                {invalid && (
+                  <Text style={mainStyles.inputError}>{error.message}</Text>
+                )}
+              </View>
+            );
+          }}
         />
-        <FlatInputControl
+
+        <Controller
           control={control}
-          name="courseNumber"
-          label="Курс"
+          name={"courseNumber"}
           rules={{
             min: {
               value: 1,
@@ -198,13 +301,32 @@ const NewGroupScreen = () => {
               message: "max 15",
             },
           }}
-          style={mainStyles.mt3}
-          editable={universityId !== ""}
+          render={({
+            field: {value, onBlur, onChange},
+            fieldState: {error, invalid},
+          }) => {
+            return (
+              <View>
+                <FlatTextInput
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  invalid={invalid}
+                  label="Курс"
+                  editable={university !== undefined}
+                  style={mainStyles.mt3}
+                />
+                {invalid && (
+                  <Text style={mainStyles.inputError}>{error.message}</Text>
+                )}
+              </View>
+            );
+          }}
         />
-        <FlatInputControl
+
+        <Controller
           control={control}
-          name="admissionYear"
-          label="Год поступления"
+          name={"admissionYear"}
           rules={{
             min: {
               value: 2000,
@@ -215,18 +337,38 @@ const NewGroupScreen = () => {
               message: "max 2022",
             },
           }}
-          style={mainStyles.mt3}
-          editable={universityId !== ""}
+          render={({
+            field: {value, onBlur, onChange},
+            fieldState: {error, invalid},
+          }) => {
+            return (
+              <View>
+                <FlatTextInput
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  invalid={invalid}
+                  label="Год поступления"
+                  editable={university !== undefined}
+                  style={mainStyles.mt3}
+                />
+                {invalid && (
+                  <Text style={mainStyles.inputError}>{error.message}</Text>
+                )}
+              </View>
+            );
+          }}
         />
+
         <Button
           text="Создать группу"
-          style={[mainStyles.mt5, mainStyles.mb5, {width: 200}]}
+          style={[mainStyles.mt5, mainStyles.mb5]}
           onPress={handleSubmit(onSubmit)}
           type={"primary"}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
-export default NewGroupScreen;
+export default NewGroup;

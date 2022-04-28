@@ -1,10 +1,8 @@
-import React from "react"
 import {View, Text} from "react-native";
 import PropTypes from "prop-types";
+import styles from "./styles";
 
-import styles from "./styles"
-
-const TimeTableDayLesson = ({
+const TimetableLesson = ({
   startTime,
   endTime,
   subject,
@@ -21,12 +19,14 @@ const TimeTableDayLesson = ({
           fontSize={12}
           fontWeight={400}
           lineHeight={14}
-          style={styles.timeText}
-        >
+          style={styles.timeText}>
           {startTime} - {endTime}
         </Text>
       </View>
-      <View style={subject !== null ? styles.timeTableLessonBlock : styles.notLesson}>
+      <View
+        style={
+          subject !== null ? styles.timeTableLessonBlock : styles.notLesson
+        }>
         {subject !== null ? (
           <>
             <View>
@@ -34,8 +34,7 @@ const TimeTableDayLesson = ({
                 fontSize={12}
                 fontWeight={400}
                 lineHeight={14}
-                style={styles.timeTableLessonText}
-              >
+                style={styles.timeTableLessonText}>
                 {subject && subject.name}
               </Text>
               <View style={styles.lessonInfo}>
@@ -45,8 +44,7 @@ const TimeTableDayLesson = ({
                       fontSize={12}
                       fontWeight={400}
                       lineHeight={18}
-                      style={styles.teacherText}
-                    >
+                      style={styles.teacherText}>
                       {teacher && teacher.name}
                     </Text>
                   </View>
@@ -57,8 +55,7 @@ const TimeTableDayLesson = ({
                       fontSize={12}
                       fontWeight={400}
                       lineHeight={18}
-                      style={styles.roomText}
-                    >
+                      style={styles.roomText}>
                       {room}
                     </Text>
                   </View>
@@ -70,8 +67,7 @@ const TimeTableDayLesson = ({
                 fontSize={12}
                 fontWeight={400}
                 lineHeight={12}
-                style={styles.classTypeText}
-              >
+                style={styles.classTypeText}>
                 {classType}
               </Text>
               <View style={styles.line} />
@@ -79,8 +75,7 @@ const TimeTableDayLesson = ({
                 fontSize={12}
                 fontWeight={400}
                 lineHeight={12}
-                style={styles.formatText}
-              >
+                style={styles.formatText}>
                 {format}
               </Text>
             </View>
@@ -90,10 +85,10 @@ const TimeTableDayLesson = ({
         )}
       </View>
     </View>
-  )
-}
+  );
+};
 
-TimeTableDayLesson.defaultProps = {
+TimetableLesson.defaultProps = {
   subject: null,
   teacher: null,
   room: "",
@@ -101,10 +96,10 @@ TimeTableDayLesson.defaultProps = {
   format: "",
   startTime: "",
   endTime: "",
-  style: {}
+  style: {},
 };
 
-TimeTableDayLesson.propTypes = {
+TimetableLesson.propTypes = {
   subject: PropTypes.object,
   teacher: PropTypes.object,
   room: PropTypes.string,
@@ -118,6 +113,4 @@ TimeTableDayLesson.propTypes = {
   ]),
 };
 
-
-
-export default TimeTableDayLesson
+export default TimetableLesson;

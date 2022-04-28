@@ -7,20 +7,15 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {useForm} from "react-hook-form";
+import {useForm, Controller} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {login} from "../../store/actions/auth";
 import {EMAIL_REGEX} from "../../constants";
-import Loader from "../../components/Loader";
-import FlatInputControl from "../../components/FlatInputControl";
-import Button from "../../components/Button";
-import Link from "../../components/Link";
+import {Button, Link, Loader, FlatTextInput, Modal} from "../../components";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
-import Modal from "../../components/Modal";
 
-const AuthScreen = ({navigation}) => {
+const Auth = ({navigation}) => {
   const dispatch = useDispatch();
 
   const {user, authStatus, authLoading, authErrors} = useSelector(state => {
@@ -73,9 +68,10 @@ const AuthScreen = ({navigation}) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={[mainStyles.screen, mainStyles.screenCenter]}>
-          <View style={styles.form}>
+        <View style={[mainStyles.screen, mainStyles.screenCenter]}>
+          <View style={[mainStyles.container, mainStyles.form]}>
             {authLoading && <Loader />}
+
             <Modal
               header="Ошибка авторизации"
               body={authErrors.join("\n")}
@@ -85,11 +81,10 @@ const AuthScreen = ({navigation}) => {
                 setErrorModalVisible(false);
               }}
             />
-            <FlatInputControl
+
+            <Controller
               control={control}
-              name="email"
-              label="Email"
-              autoFocus={true}
+              name={"email"}
               rules={{
                 required: "Необходимо заполнить",
                 maxLength: {
@@ -101,9 +96,31 @@ const AuthScreen = ({navigation}) => {
                   message: "Не является email",
                 },
               }}
+              render={({
+                field: {value, onBlur, onChange},
+                fieldState: {error, invalid},
+              }) => {
+                return (
+                  <View>
+                    <FlatTextInput
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      invalid={invalid}
+                      label={"Email"}
+                      autoFocus={true}
+                    />
+                    {invalid && (
+                      <Text style={mainStyles.inputError}>{error.message}</Text>
+                    )}
+                  </View>
+                );
+              }}
             />
-            <FlatInputControl
+
+            <Controller
               control={control}
+              name={"password"}
               rules={{
                 required: "Необходимо заполнить",
                 minLength: {
@@ -115,10 +132,27 @@ const AuthScreen = ({navigation}) => {
                   message: "Максимальная длина 100",
                 },
               }}
-              name="password"
-              label="Пароль"
-              style={mainStyles.mt3}
+              render={({
+                field: {value, onBlur, onChange},
+                fieldState: {error, invalid},
+              }) => {
+                return (
+                  <View style={mainStyles.mt3}>
+                    <FlatTextInput
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      invalid={invalid}
+                      label={"Password"}
+                    />
+                    {invalid && (
+                      <Text style={mainStyles.inputError}>{error.message}</Text>
+                    )}
+                  </View>
+                );
+              }}
             />
+
             <Button
               text="Вход"
               style={mainStyles.mt5}
@@ -142,10 +176,10 @@ const AuthScreen = ({navigation}) => {
               />
             </View>
           </View>
-        </SafeAreaView>
+        </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
 
-export default AuthScreen;
+export default Auth;

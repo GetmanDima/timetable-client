@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import {primaryColor, whiteColor} from "../../styles/constants";
 import styles from "./styles";
 
-const FlatInput = ({
+const FlatTextInput = ({
   value,
   label,
   invalid,
@@ -82,7 +82,7 @@ const FlatInput = ({
   };
 
   return (
-    <View style={style}>
+    <View style={[styles.inputWrapper, style]}>
       <Animated.Text
         style={[
           styles.label,
@@ -118,7 +118,7 @@ const FlatInput = ({
   );
 };
 
-FlatInput.propTypes = {
+FlatTextInput.propTypes = {
   value: PropTypes.string,
   label: PropTypes.string.isRequired,
   invalid: PropTypes.bool,
@@ -132,7 +132,7 @@ FlatInput.propTypes = {
   ]),
 };
 
-FlatInput.defaultProps = {
+FlatTextInput.defaultProps = {
   invalid: false,
   autoFocus: false,
   editable: true,
@@ -141,4 +141,4 @@ FlatInput.defaultProps = {
   style: {},
 };
 
-export default FlatInput;
+export default FlatTextInput;

@@ -1,16 +1,13 @@
 import {StyleSheet} from "react-native";
-import {textFontSize} from "../../styles/constants";
+import {lightDarkColor, textFontSize, whiteColor} from "../../styles/constants";
 
 export default StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
     alignItems: "center",
-    backgroundColor: "#081320",
   },
   text: {
     fontSize: textFontSize,
-    color: "#fff",
+    color: whiteColor,
   },
   timetable: {
     marginBottom: 10,
@@ -18,7 +15,7 @@ export default StyleSheet.create({
     width: 300,
     flexDirection: "row",
     justifyContent: "space-between",
-    borderRadius: 10,
-    backgroundColor: "#0F2238",
+    borderRadius: 5,
+    backgroundColor: lightDarkColor,
   },
 });

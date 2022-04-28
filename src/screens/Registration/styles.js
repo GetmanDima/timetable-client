@@ -2,9 +2,6 @@ import {StyleSheet} from "react-native";
 import {lightColor, lightPrimaryColor} from "../../styles/constants";
 
 export default StyleSheet.create({
-  form: {
-    alignItems: "center",
-  },
   alternative: {
     flexDirection: "row",
     marginTop: 60,
@@ -19,6 +16,5 @@ export default StyleSheet.create({
   },
   submit: {
     marginTop: 50,
-    width: 200,
   },
 });

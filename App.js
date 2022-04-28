@@ -55,11 +55,6 @@ export default function App() {
             component={TabNavigation}
             options={{headerShown: false}}
           />
-          {/* <Stack.Screen
-            name="Timetables"
-            component={Timetables}
-            options={{title: "Мои расписания"}}
-          /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

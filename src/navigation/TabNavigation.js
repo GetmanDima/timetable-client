@@ -3,7 +3,12 @@ import {View} from "react-native";
 import MaterialIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import ChooseTimetableNavigation from "./ChooseTimetableNavigation";
 import TimetablesNavigation from "./TimetablesNavigation";
-import {lightColor, lightDarkColor, secondaryColor} from "../styles/constants";
+import {
+  darkColor,
+  lightColor,
+  lightDarkColor,
+  secondaryColor,
+} from "../styles/constants";
 
 const Tab = createBottomTabNavigator();
 
@@ -17,7 +22,8 @@ const TabNavigation = () => {
         headerTintColor: "#fff",
         tabBarStyle: {
           height: 50,
-          borderTopWidth: 0,
+          borderTopWidth: 1,
+          borderTopColor: darkColor,
           elevation: 0,
           backgroundColor: lightDarkColor,
         },

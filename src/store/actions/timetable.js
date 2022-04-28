@@ -18,9 +18,9 @@ export const failGetTimetables = errors => {
   };
 };
 
-export const getTimetables = () => {
+export const getTimetables = ({parsed}) => {
   return async (dispatch, getState) => {
-    fetchTimetables(getState().auth.accessToken)
+    fetchTimetables(getState().auth.accessToken, {parsed})
       .then(res => {
         dispatch(successGetTimetables(res.data));
       })

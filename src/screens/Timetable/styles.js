@@ -5,10 +5,11 @@ export default StyleSheet.create({
   weekDays: {
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
   },
   weekDay: {
-    width: 50,
-    marginHorizontal: 5,
+    paddingHorizontal: 10,
   },
   weekTypeText: {
     marginTop: 50,

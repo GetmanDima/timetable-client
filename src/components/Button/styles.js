@@ -3,8 +3,8 @@ import {lightColor, textFontSize} from "../../styles/constants";
 
 export default StyleSheet.create({
   button: {
-    width: 115,
-    padding: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",

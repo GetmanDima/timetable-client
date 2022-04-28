@@ -1,15 +1,13 @@
 import {useState, useEffect, useMemo} from "react";
 import {View, ScrollView, Text} from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
 import {useDispatch, useSelector} from "react-redux";
-import Loader from "../../components/Loader";
 import {getTimetableLessons} from "../../store/actions/timetableLesson";
-import {Button, TimeTableDayLesson} from "../../components";
-import styles from "./styles";
-import mainStyles from "../../styles/styles";
+import {Button, Loader, TimetableLesson} from "../../components";
 import {weekDays} from "../../constants";
+import mainStyles from "../../styles/styles";
+import styles from "./styles";
 
-const TimetableScreen = ({route, navigation}) => {
+const Timetable = ({route, navigation}) => {
   const {timetable} = route.params;
 
   const dispatch = useDispatch();
@@ -46,7 +44,7 @@ const TimetableScreen = ({route, navigation}) => {
           .map(day => {
             return (
               <View key={day.id}>
-                <TimeTableDayLesson
+                <TimetableLesson
                   subject={day.subject}
                   teacher={day.teacher}
                   room={day.room}
@@ -73,7 +71,7 @@ const TimetableScreen = ({route, navigation}) => {
           .map(day => {
             return (
               <View key={day.id}>
-                <TimeTableDayLesson
+                <TimetableLesson
                   subject={day.subject}
                   teacher={day.teacher}
                   room={day.room}
@@ -92,34 +90,36 @@ const TimetableScreen = ({route, navigation}) => {
   const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
 
   return (
-    <SafeAreaView style={mainStyles.screen}>
+    <View style={mainStyles.screen}>
       {loading && <Loader />}
       <ScrollView>
-        <View style={styles.weekDays}>
-          {shortWeekDays.map((day, idx) => (
-            <Button
-              key={day}
-              onPress={() => setCurrentWeekDay(weekDays[idx])}
-              text={day}
-              style={styles.weekDay}
-              type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
-            />
-          ))}
-        </View>
+        <View style={mainStyles.container}>
+          <View style={styles.weekDays}>
+            {shortWeekDays.map((day, idx) => (
+              <Button
+                key={day}
+                onPress={() => setCurrentWeekDay(weekDays[idx])}
+                text={day}
+                style={styles.weekDay}
+                type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
+              />
+            ))}
+          </View>
 
-        <View style={{alignItems: "center"}}>
-          {weekDaysWithLessons && (
-            <View>
-              <Text style={styles.weekTypeText}>High week</Text>
-              {highWeekDayLessons}
-              <Text style={styles.weekTypeText}>Low week</Text>
-              {lowWeekDayLessons}
-            </View>
-          )}
+          <View style={{alignItems: "center"}}>
+            {weekDaysWithLessons && (
+              <View>
+                <Text style={styles.weekTypeText}>High week</Text>
+                {highWeekDayLessons}
+                <Text style={styles.weekTypeText}>Low week</Text>
+                {lowWeekDayLessons}
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
-export default TimetableScreen;
+export default Timetable;

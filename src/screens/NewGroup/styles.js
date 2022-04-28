@@ -1,8 +1,16 @@
 import {StyleSheet} from "react-native";
-import {lightPrimaryColor} from "../../styles/constants";
 
 export default StyleSheet.create({
-  form: {
-    alignItems: "center",
+  pickerWithCreator: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    width: 300,
+    justifyContent: "space-between",
+  },
+  pickerWithCreatorButton: {
+    width: 45,
+    height: 45,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
 });
