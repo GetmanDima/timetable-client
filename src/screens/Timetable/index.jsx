@@ -1,6 +1,7 @@
 import {useState, useEffect, useMemo} from "react";
 import {View, ScrollView, Text} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
+import {capitalizeFirstLetter} from "../../utils";
 import {getTimetableLessons} from "../../store/actions/timetableLesson";
 import {Button, Loader, TimetableLesson} from "../../components";
 import {weekDays} from "../../constants";
@@ -33,58 +34,39 @@ const Timetable = ({route, navigation}) => {
     }
   }, []);
 
-  const highWeekDayLessons = useMemo(() => {
-    return weekDaysWithLessons &&
-      weekDaysWithLessons[currentWeekDay] &&
-      weekDaysWithLessons[currentWeekDay].high
-      ? weekDaysWithLessons[currentWeekDay].high
-          .sort(
-            (day1, day2) => day1.classTime.startTime > day2.classTime.startTime,
-          )
-          .map(day => {
-            return (
-              <View key={day.id}>
-                <TimetableLesson
-                  subject={day.subject}
-                  teacher={day.teacher}
-                  room={day.room}
-                  classType={day.classType}
-                  format={day.format}
-                  startTime={day.classTime.startTime}
-                  endTime={day.classTime.endTime}
-                  style={mainStyles.mb4}
-                />
-              </View>
-            );
-          })
-      : [];
-  }, [weekDaysWithLessons, currentWeekDay]);
+  const weekDayWithLessons = useMemo(() => {
+    if (!weekDaysWithLessons || !weekDaysWithLessons[currentWeekDay]) {
+      return [];
+    }
 
-  const lowWeekDayLessons = useMemo(() => {
-    return weekDaysWithLessons &&
-      weekDaysWithLessons[currentWeekDay] &&
-      weekDaysWithLessons[currentWeekDay].low
-      ? weekDaysWithLessons[currentWeekDay].low
-          .sort(
-            (day1, day2) => day1.classTime.startTime > day2.classTime.startTime,
-          )
-          .map(day => {
-            return (
-              <View key={day.id}>
-                <TimetableLesson
-                  subject={day.subject}
-                  teacher={day.teacher}
-                  room={day.room}
-                  classType={day.classType}
-                  format={day.format}
-                  startTime={day.classTime.startTime}
-                  endTime={day.classTime.endTime}
-                  style={mainStyles.mb4}
-                />
-              </View>
-            );
-          })
-      : [];
+    return Object.entries(weekDaysWithLessons[currentWeekDay])
+      .sort(([weekTypeName1], [weekTypeName2]) =>
+        weekTypeName1 > weekTypeName2 ? 1 : -1,
+      )
+      .map(([weekTypeName, lessons]) => {
+        const lessonItems = lessons.map(lesson => (
+          <TimetableLesson
+            key={lesson.id}
+            subject={lesson.subject}
+            teacher={lesson.teacher}
+            room={lesson.room}
+            classType={lesson.classType}
+            format={lesson.format}
+            startTime={lesson.classTime.startTime}
+            endTime={lesson.classTime.endTime}
+            style={mainStyles.mb4}
+          />
+        ));
+
+        return (
+          <View key={weekTypeName}>
+            <Text style={styles.weekTypeText}>
+              {capitalizeFirstLetter(weekTypeName)}
+            </Text>
+            {lessonItems}
+          </View>
+        );
+      });
   }, [weekDaysWithLessons, currentWeekDay]);
 
   const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
@@ -106,16 +88,7 @@ const Timetable = ({route, navigation}) => {
             ))}
           </View>
 
-          <View style={{alignItems: "center"}}>
-            {weekDaysWithLessons && (
-              <View>
-                <Text style={styles.weekTypeText}>High week</Text>
-                {highWeekDayLessons}
-                <Text style={styles.weekTypeText}>Low week</Text>
-                {lowWeekDayLessons}
-              </View>
-            )}
-          </View>
+          <View style={{alignItems: "center"}}>{weekDayWithLessons}</View>
         </View>
       </ScrollView>
     </View>

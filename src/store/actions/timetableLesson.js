@@ -43,14 +43,16 @@ export const getTimetableLessons = timetableId => {
 };
 
 const toWeekDaysWithLessons = lessons => {
+  const defaultWeekTypeName = "common";
+
   return lessons
     ? lessons.reduce((weekDays, lesson) => {
         const newLesson = {
           id: lesson.id,
           weekDay: lesson.weekDay,
-          weekType: lesson.weekType,
           format: lesson.format,
           room: lesson.room,
+          weekType: lesson.WeekType,
           classType: lesson.classType,
           classTime: lesson.ClassTime,
           teacher: lesson.Teacher,
@@ -63,20 +65,24 @@ const toWeekDaysWithLessons = lessons => {
 
         let newWeekType = {};
 
-        if (newLesson.weekDay && newLesson.weekType) {
+        if (newLesson.weekDay) {
+          const weekTypeName = newLesson.weekType.name
+            ? newLesson.weekType.name
+            : defaultWeekTypeName;
+
           if (
             weekDays[newLesson.weekDay] &&
-            weekDays[newLesson.weekDay][newLesson.weekType]
+            weekDays[newLesson.weekDay][weekTypeName]
           ) {
             newWeekType = {
-              [newLesson.weekType]: [
-                ...weekDays[newLesson.weekDay][newLesson.weekType],
+              [weekTypeName]: [
+                ...weekDays[newLesson.weekDay][weekTypeName],
                 newLesson,
               ],
             };
           } else {
             newWeekType = {
-              [newLesson.weekType]: [newLesson],
+              [weekTypeName]: [newLesson],
             };
           }
         }

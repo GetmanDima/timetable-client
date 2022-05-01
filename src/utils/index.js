@@ -18,3 +18,7 @@ export const getUserFromToken = token => {
     return null;
   }
 };
+
+export const capitalizeFirstLetter = string => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
