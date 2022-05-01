@@ -223,26 +223,24 @@ const NewGroup = ({navigation}) => {
                   }}
                 />
                 <View>
-                  <View style={styles.pickerWithCreator}>
-                    <FlatInputPicker
-                      items={universities}
-                      selectedValue={value}
-                      label="Университет"
-                      invalid={invalid}
-                      loading={universityLoading}
-                      onValueChange={onChange}
-                      onBlur={onBlur}
-                      onEndReached={onUniversityEndReached}
-                      style={{width: 230}}
-                    />
-                    <Button
-                      text="+"
-                      onPress={() => {
-                        setNewUniversityModalVisible(true);
-                      }}
-                      style={styles.pickerWithCreatorButton}
-                    />
-                  </View>
+                  <FlatInputPicker
+                    items={universities}
+                    selectedValue={value}
+                    label="Университет"
+                    invalid={invalid}
+                    loading={universityLoading}
+                    onValueChange={onChange}
+                    onBlur={onBlur}
+                    onEndReached={onUniversityEndReached}
+                    style={{width: 230}}
+                  />
+                  <Button
+                    text="+"
+                    onPress={() => {
+                      setNewUniversityModalVisible(true);
+                    }}
+                    style={styles.pickerWithCreatorButton}
+                  />
                   {invalid && (
                     <Text style={mainStyles.inputError}>{error.message}</Text>
                   )}

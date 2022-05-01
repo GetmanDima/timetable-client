@@ -1,5 +1,6 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Timetables from "../screens/Timetables";
+import CreateTimetable from "../screens/CreateTimetable";
 import Timetable from "../screens/Timetable";
 import {lightDarkColor} from "../styles/constants";
 
@@ -17,6 +18,13 @@ const TimetablesNavigation = () => {
       <Stack.Screen
         name="Timetables"
         component={Timetables}
+        options={{
+          title: "Мое расписание",
+        }}
+      />
+      <Stack.Screen
+        name="CreateTimetable"
+        component={CreateTimetable}
         options={{
           title: "Мое расписание",
         }}

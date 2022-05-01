@@ -2,6 +2,7 @@ import {fetchTimetables} from "../../api/timetable";
 import {
   SUCCESS_GET_TIMETABLES,
   FAIL_GET_TIMETABLES,
+  ADD_TIMETABLE,
 } from "../actionTypes/timetable";
 
 export const successGetTimetables = timetables => {
@@ -15,6 +16,13 @@ export const failGetTimetables = errors => {
   return {
     type: FAIL_GET_TIMETABLES,
     payload: errors,
+  };
+};
+
+export const addTimetable = ({id, name}) => {
+  return {
+    type: ADD_TIMETABLE,
+    payload: {id, name, createdAt: Date.now(), updatedAt: Date.now()},
   };
 };
 

@@ -3,6 +3,7 @@ import {View, Modal, Text, Keyboard, Pressable, ScrollView} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import PropTypes from "prop-types";
 import {useForm, Controller} from "react-hook-form";
+import {getIdFromLocation} from "../../utils";
 import Button from "../Button";
 import Loader from "../Loader";
 import FlatTextInput from "../FlatTextInput";
@@ -69,7 +70,7 @@ const NewItemModal = ({
     )
       .then(res => {
         if (res.status === 201) {
-          const id = res.headers["location"].split("/").slice(-1)[0];
+          const id = getIdFromLocation(res.headers["location"]);
 
           setValue({id, ...getValues(), modalCreatedAt: Date.now()});
         }

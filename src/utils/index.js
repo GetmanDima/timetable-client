@@ -22,3 +22,7 @@ export const getUserFromToken = token => {
 export const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+export const getIdFromLocation = location => {
+  return parseInt(location.split("/").slice(-1)[0]);
+};

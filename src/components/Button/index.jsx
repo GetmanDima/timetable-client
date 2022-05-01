@@ -8,7 +8,15 @@ import {
 } from "../../styles/constants";
 import styles from "./styles";
 
-const Button = ({type, text, disabled, onPress, style, ...props}) => {
+const Button = ({
+  type,
+  text,
+  disabled,
+  onPress,
+  textStyle,
+  style,
+  ...props
+}) => {
   const color = typesToColors[type];
   const onPressColor = typesToDarkerColors[type];
 
@@ -34,7 +42,7 @@ const Button = ({type, text, disabled, onPress, style, ...props}) => {
         style,
       ]}
       {...props}>
-      <Text style={styles.buttonText}>{text}</Text>
+      <Text style={[styles.buttonText, textStyle]}>{text}</Text>
     </Pressable>
   );
 };
@@ -44,6 +52,10 @@ Button.propTypes = {
   text: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
+  textStyle: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   style: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.arrayOf(PropTypes.object),

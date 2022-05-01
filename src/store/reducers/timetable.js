@@ -2,6 +2,7 @@ import {
   SUCCESS_GET_TIMETABLES,
   FAIL_GET_TIMETABLES,
   START_LOADING_TIMETABLES,
+  ADD_TIMETABLE,
 } from "../actionTypes/timetable";
 
 const initialState = {
@@ -25,7 +26,8 @@ export default (state = initialState, action) => {
       return {...state, loading: false, errors: payload};
     case START_LOADING_TIMETABLES:
       return {...state, loading: true};
-
+    case ADD_TIMETABLE:
+      return {...state, timetables: [...state.timetables, payload]};
     default:
       return state;
   }

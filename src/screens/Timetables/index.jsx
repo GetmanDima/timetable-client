@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {ScrollView, View, Text, Pressable} from "react-native";
 import {useSelector, useDispatch} from "react-redux";
-import {Loader} from "../../components";
+import {Button, Loader} from "../../components";
 import {getTimetables} from "../../store/actions/timetable";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
@@ -23,6 +23,15 @@ const Timetables = ({navigation}) => {
   return (
     <View style={mainStyles.screen}>
       {loading && <Loader />}
+      <Button
+        disabled={false}
+        text="+"
+        onPress={() => {
+          navigation.navigate("CreateTimetable");
+        }}
+        textStyle={styles.createButtonText}
+        style={styles.createButton}
+      />
       <ScrollView>
         <View style={[mainStyles.container, styles.container]}>
           {timetables.map(timetable => (
