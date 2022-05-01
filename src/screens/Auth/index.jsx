@@ -37,7 +37,7 @@ const Auth = ({navigation}) => {
         } else {
           navigation.reset({
             index: 0,
-            routes: [{name: "NewGroup"}],
+            routes: [{name: "CreateGroup"}],
           });
         }
       }

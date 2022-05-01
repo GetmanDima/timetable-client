@@ -5,7 +5,7 @@ import store from "./src/store/store";
 import TabNavigation from "./src/navigation/TabNavigation";
 import Auth from "./src/screens/Auth";
 import Registration from "./src/screens/Registration";
-import NewGroup from "./src/screens/NewGroup";
+import CreateGroup from "./src/screens/CreateGroup";
 import Timetable from "./src/screens/Timetable";
 import ChooseTimetable from "./src/screens/ChooseTimetable";
 import {lightDarkColor} from "./src/styles/constants";
@@ -46,8 +46,8 @@ export default function App() {
             options={{title: "Регистрация"}}
           />
           <Stack.Screen
-            name="NewGroup"
-            component={NewGroup}
+            name="CreateGroup"
+            component={CreateGroup}
             options={{title: "Создать группу"}}
           />
           <Stack.Screen

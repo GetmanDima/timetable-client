@@ -16,7 +16,7 @@ import {logout} from "../../store/actions/auth";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
-const NewGroup = ({navigation}) => {
+const CreateGroup = ({navigation}) => {
   const dispatch = useDispatch();
 
   const {accessToken} = useSelector(state => {
@@ -223,27 +223,29 @@ const NewGroup = ({navigation}) => {
                   }}
                 />
                 <View>
-                  <FlatInputPicker
-                    items={universities}
-                    selectedValue={value}
-                    label="Университет"
-                    invalid={invalid}
-                    loading={universityLoading}
-                    onValueChange={onChange}
-                    onBlur={onBlur}
-                    onEndReached={onUniversityEndReached}
-                    style={{width: 230}}
-                  />
-                  <Button
-                    text="+"
-                    onPress={() => {
-                      setNewUniversityModalVisible(true);
-                    }}
-                    style={styles.pickerWithCreatorButton}
-                  />
-                  {invalid && (
-                    <Text style={mainStyles.inputError}>{error.message}</Text>
-                  )}
+                  <View style={styles.pickerWithButton}>
+                    <FlatInputPicker
+                      items={universities}
+                      selectedValue={value}
+                      label="Университет"
+                      invalid={invalid}
+                      loading={universityLoading}
+                      onValueChange={onChange}
+                      onBlur={onBlur}
+                      onEndReached={onUniversityEndReached}
+                      style={{width: 230}}
+                    />
+                    <Button
+                      text="+"
+                      onPress={() => {
+                        setNewUniversityModalVisible(true);
+                      }}
+                      style={styles.pickerButton}
+                    />
+                    {invalid && (
+                      <Text style={mainStyles.inputError}>{error.message}</Text>
+                    )}
+                  </View>
                 </View>
               </View>
             );
@@ -369,4 +371,4 @@ const NewGroup = ({navigation}) => {
   );
 };
 
-export default NewGroup;
+export default CreateGroup;

@@ -1,13 +1,13 @@
 import {StyleSheet} from "react-native";
 
 export default StyleSheet.create({
-  pickerWithCreator: {
+  pickerWithButton: {
     flexDirection: "row",
     alignItems: "flex-end",
     width: 300,
     justifyContent: "space-between",
   },
-  pickerWithCreatorButton: {
+  pickerButton: {
     width: 45,
     height: 45,
     paddingVertical: 0,
