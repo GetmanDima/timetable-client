@@ -8,18 +8,58 @@ import {
   lightColor,
   lightDarkColor,
   secondaryColor,
+  whiteColor,
 } from "../styles/constants";
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigation = () => {
+  const routes = [
+    {
+      name: "TimetablesNavigation",
+      component: TimetablesNavigation,
+      options: {
+        headerShown: false,
+        tabBarIcon: ({focused}) => {
+          return (
+            <View>
+              <MaterialIcon
+                name="calendar-star"
+                size={30}
+                color={focused ? lightColor : secondaryColor}
+              />
+            </View>
+          );
+        },
+      },
+    },
+    {
+      name: "ChooseTimetableNavigation",
+      component: ChooseTimetableNavigation,
+      options: {
+        headerShown: false,
+        tabBarIcon: ({focused}) => {
+          return (
+            <View>
+              <MaterialIcon
+                name="calendar-search"
+                size={30}
+                color={focused ? lightColor : secondaryColor}
+              />
+            </View>
+          );
+        },
+      },
+    },
+  ];
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: true,
         headerStyle: {backgroundColor: lightDarkColor},
-        headerTitleStyle: {color: "#fff"},
-        headerTintColor: "#fff",
+        headerTitleStyle: {color: whiteColor},
+        headerTintColor: whiteColor,
         tabBarStyle: {
           height: 50,
           borderTopWidth: 1,
@@ -29,42 +69,14 @@ const TabNavigation = () => {
         },
         tabBarShowLabel: false,
       }}>
-      <Tab.Screen
-        name="TimetablesNavigation"
-        component={TimetablesNavigation}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => {
-            return (
-              <View>
-                <MaterialIcon
-                  name="calendar-star"
-                  size={30}
-                  color={focused ? lightColor : secondaryColor}
-                />
-              </View>
-            );
-          },
-        }}
-      />
-      <Tab.Screen
-        name="ChooseTimetableNavigation"
-        component={ChooseTimetableNavigation}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => {
-            return (
-              <View>
-                <MaterialIcon
-                  name="calendar-search"
-                  size={30}
-                  color={focused ? lightColor : secondaryColor}
-                />
-              </View>
-            );
-          },
-        }}
-      />
+      {routes.map(route => (
+        <Tab.Screen
+          key={route.name}
+          name={route.name}
+          component={route.component}
+          options={route.options}
+        />
+      ))}
     </Tab.Navigator>
   );
 };
