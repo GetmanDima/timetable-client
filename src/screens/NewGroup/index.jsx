@@ -5,7 +5,7 @@ import {
   Button,
   Loader,
   FlatTextInput,
-  FlatPicker,
+  FlatInputPicker,
   Modal,
   NewItemModal,
 } from "../../components";
@@ -224,7 +224,7 @@ const NewGroup = ({navigation}) => {
                 />
                 <View>
                   <View style={styles.pickerWithCreator}>
-                    <FlatPicker
+                    <FlatInputPicker
                       items={universities}
                       selectedValue={value}
                       label="Университет"
