@@ -1,5 +1,6 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import TabNavigation from "./TabNavigation";
+import Start from "../screens/Start";
 import Auth from "../screens/Auth";
 import Registration from "../screens/Registration";
 import CreateGroup from "../screens/CreateGroup";
@@ -11,6 +12,13 @@ const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
   const routes = [
+    {
+      name: "Start",
+      component: Start,
+      options: {
+        headerShown: false,
+      },
+    },
     {
       name: "ChooseTimetable",
       component: ChooseTimetable,

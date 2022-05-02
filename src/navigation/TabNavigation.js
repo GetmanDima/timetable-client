@@ -1,8 +1,10 @@
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {View} from "react-native";
-import MaterialIcon from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcon from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import ChooseTimetableNavigation from "./ChooseTimetableNavigation";
 import TimetablesNavigation from "./TimetablesNavigation";
+import Settings from "../screens/Settings";
 import {
   darkColor,
   lightColor,
@@ -23,7 +25,7 @@ const TabNavigation = () => {
         tabBarIcon: ({focused}) => {
           return (
             <View>
-              <MaterialIcon
+              <MaterialCommunityIcon
                 name="calendar-star"
                 size={30}
                 color={focused ? lightColor : secondaryColor}
@@ -41,8 +43,26 @@ const TabNavigation = () => {
         tabBarIcon: ({focused}) => {
           return (
             <View>
-              <MaterialIcon
+              <MaterialCommunityIcon
                 name="calendar-search"
+                size={30}
+                color={focused ? lightColor : secondaryColor}
+              />
+            </View>
+          );
+        },
+      },
+    },
+    {
+      name: "Settings",
+      component: Settings,
+      options: {
+        title: "Настройки",
+        tabBarIcon: ({focused}) => {
+          return (
+            <View>
+              <MaterialIcon
+                name="settings"
                 size={30}
                 color={focused ? lightColor : secondaryColor}
               />

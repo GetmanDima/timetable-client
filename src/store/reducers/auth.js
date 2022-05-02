@@ -15,7 +15,7 @@ const initialState = {
     lastName: "",
     groupId: null,
   },
-  loading: false,
+  loading: true,
   errors: [],
 };
 
@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
     case FAIL_LOGIN:
       return {...state, status: false, loading: false, errors: payload};
     case LOGOUT:
-      return {...initialState};
+      return {...initialState, loading: false};
     case SET_GROUP:
       return {...state, user: {...state.user, groupId: payload.value}};
     case START_LOADING_LOGIN:

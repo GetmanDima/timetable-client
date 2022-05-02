@@ -3,7 +3,8 @@ import {Pressable, Text} from "react-native";
 import PropTypes from "prop-types";
 import {
   typesToColors,
-  typesToDarkerColors,
+  typesToDarkColors,
+  typesToLightColors,
   lightSecondaryColor,
 } from "../../styles/constants";
 import styles from "./styles";
@@ -18,7 +19,8 @@ const Button = ({
   ...props
 }) => {
   const color = typesToColors[type];
-  const onPressColor = typesToDarkerColors[type];
+  const onPressColor =
+    type === "dark" ? typesToLightColors[type] : typesToDarkColors[type];
 
   const [isPressed, setIsPressed] = useState(false);
 

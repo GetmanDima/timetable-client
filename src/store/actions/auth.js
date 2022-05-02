@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {getUserFromToken} from "../../utils";
 import {
   SUCCESS_LOGIN,
@@ -6,7 +7,11 @@ import {
   START_LOADING_LOGIN,
   SET_GROUP,
 } from "../actionTypes/auth";
-import {requestLogin, requestCreateGroup} from "../../api/auth";
+import {
+  requestLogin,
+  requestCreateGroup,
+  requestUpdateLogin,
+} from "../../api/auth";
 
 const startLoading = () => {
   return {
@@ -35,12 +40,19 @@ export const login = (email, password) => {
   return async dispatch => {
     dispatch(startLoading());
     requestLogin(email, password)
-      .then(res => {
+      .then(async res => {
         const accessToken = res.data.accessToken;
+        const refreshToken = res.data.refreshToken;
         const user = getUserFromToken(res.data.accessToken);
 
         if (user === null) {
           return dispatch(failLogin(["Unknown error"]));
+        }
+
+        try {
+          await AsyncStorage.setItem("refreshToken", refreshToken);
+        } catch (e) {
+          console.log(e);
         }
 
         dispatch(successLogin(accessToken, user));
@@ -60,8 +72,52 @@ export const login = (email, password) => {
 };
 
 export const logout = () => {
-  return {
-    type: LOGOUT,
+  return async dispatch => {
+    try {
+      await AsyncStorage.removeItem("refreshToken");
+    } catch (e) {
+      console.log(e);
+    }
+
+    dispatch({type: LOGOUT});
+  };
+};
+
+export const updateLogin = () => {
+  return async dispatch => {
+    let refreshToken;
+
+    try {
+      refreshToken = await AsyncStorage.getItem("refreshToken");
+
+      if (!refreshToken) {
+        dispatch(failLogin([]));
+      }
+    } catch (e) {
+      dispatch(failLogin([]));
+    }
+
+    requestUpdateLogin(refreshToken)
+      .then(async res => {
+        const accessToken = res.data.accessToken;
+        const refreshToken = res.data.refreshToken;
+        const user = getUserFromToken(res.data.accessToken);
+
+        if (user === null) {
+          return dispatch(failLogin([]));
+        }
+
+        try {
+          await AsyncStorage.setItem("refreshToken", refreshToken);
+        } catch (e) {
+          console.log(e);
+        }
+
+        dispatch(successLogin(accessToken, user));
+      })
+      .catch(() => {
+        dispatch(failLogin([]));
+      });
   };
 };
 

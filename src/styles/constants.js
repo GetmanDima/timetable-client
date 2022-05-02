@@ -27,13 +27,13 @@ export const typesToColors = {
   primary: primaryColor,
   danger: dangerColor,
 };
-export const typesToDarkerColors = {
-  dark: darkColor,
+export const typesToDarkColors = {
   secondary: secondaryColor,
   primary: darkPrimaryColor,
   danger: dangerColor,
 };
 export const typesToLightColors = {
+  dark: lightDarkColor,
   secondaryColor: lightSecondaryColor,
   primary: lightPrimaryColor,
   danger: lightDangerColor,

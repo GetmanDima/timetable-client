@@ -18,9 +18,8 @@ import styles from "./styles";
 const Auth = ({navigation}) => {
   const dispatch = useDispatch();
 
-  const {user, authStatus, authLoading, authErrors} = useSelector(state => {
+  const {authStatus, authLoading, authErrors} = useSelector(state => {
     return {
-      user: state.auth.user,
       authStatus: state.auth.status,
       authLoading: state.auth.loading,
       authErrors: state.auth.errors,
@@ -30,19 +29,13 @@ const Auth = ({navigation}) => {
   const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   useEffect(() => {
-    if (!authLoading) {
-      if (authStatus) {
-        if (user.groupId) {
-          navigation.navigate("TabNavigation", {screen: "Timetables"});
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{name: "CreateGroup"}],
-          });
-        }
-      }
+    if (authStatus) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: "Start"}],
+      });
     }
-  }, [authLoading, authStatus]);
+  }, [authStatus]);
 
   useEffect(() => {
     if (authErrors.length > 0) {
