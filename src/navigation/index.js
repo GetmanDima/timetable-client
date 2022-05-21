@@ -1,4 +1,8 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {View} from "react-native";
+import {useDispatch} from "react-redux";
+import MaterialIcon from "@expo/vector-icons/MaterialIcons";
+import {logout} from "../store/actions/auth";
 import TabNavigation from "./TabNavigation";
 import Start from "../screens/Start";
 import Auth from "../screens/Auth";
@@ -6,11 +10,13 @@ import Registration from "../screens/Registration";
 import CreateGroup from "../screens/CreateGroup";
 import Timetable from "../screens/Timetable";
 import ChooseTimetable from "../screens/ChooseTimetable";
-import {lightDarkColor, whiteColor} from "../styles/constants";
+import {lightColor, lightDarkColor, whiteColor} from "../styles/constants";
 
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
+  const dispatch = useDispatch();
+
   const routes = [
     {
       name: "Start",
@@ -52,6 +58,22 @@ const Navigation = () => {
       component: CreateGroup,
       options: {
         title: "Создать группу",
+        headerRight: () => {
+          return (
+            <View>
+              <MaterialIcon.Button
+                onPress={() => {
+                  dispatch(logout());
+                }}
+                iconStyle={{marginRight: 0}}
+                backgroundColor={null}
+                name="logout"
+                size={25}
+                color={lightColor}
+              />
+            </View>
+          );
+        },
       },
     },
     {
