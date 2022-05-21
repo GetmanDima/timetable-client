@@ -12,4 +12,7 @@ export default StyleSheet.create({
   alternativeLink: {
     color: lightPrimaryColor,
   },
+  lastOpened: {
+    marginBottom: 20,
+  },
 });

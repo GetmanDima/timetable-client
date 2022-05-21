@@ -1,7 +1,7 @@
 import {useEffect} from "react";
-import {ScrollView, View, Text, Pressable} from "react-native";
+import {ScrollView, View} from "react-native";
 import {useSelector, useDispatch} from "react-redux";
-import {Button, Loader} from "../../components";
+import {Button, Loader, TimetableItem} from "../../components";
 import {getTimetables} from "../../store/actions/timetable";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
@@ -35,16 +35,14 @@ const Timetables = ({navigation}) => {
       <ScrollView>
         <View style={[mainStyles.container, styles.container]}>
           {timetables.map(timetable => (
-            <Pressable
-              key={timetable.id}
-              onPress={() =>
-                navigation.navigate("Timetable", {timetable: timetable})
-              }>
-              <View style={styles.timetable}>
-                <Text style={styles.text}>{timetable.name}</Text>
-                <Text style={styles.text}>{timetable.creationType}</Text>
-              </View>
-            </Pressable>
+            <View key={timetable.id}>
+              <TimetableItem
+                timetable={timetable}
+                onPress={() =>
+                  navigation.navigate("Timetable", {timetable: timetable})
+                }
+              />
+            </View>
           ))}
         </View>
       </ScrollView>

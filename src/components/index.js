@@ -6,3 +6,4 @@ export {default as FlatInputPicker} from "./FlatInputPicker";
 export {default as Modal} from "./Modal";
 export {default as NewItemModal} from "./NewItemModal";
 export {default as TimetableLesson} from "./TimetableLesson";
+export {default as TimetableItem} from "./TimetableItem";

@@ -6,11 +6,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useSelector} from "react-redux";
 import {useForm, Controller} from "react-hook-form";
-import {Button, Link, FlatInputPicker} from "../../components";
+import {Button, Link, FlatInputPicker, TimetableItem} from "../../components";
 import {fetchUniversities} from "../../api/university";
 import {fetchGroups} from "../../api/group";
 import {fetchGroupTimetables} from "../../api/timetable";
@@ -41,6 +42,8 @@ const ChooseTimetable = ({navigation}) => {
   const [timetableTotalCount, setTimetableTotalCount] = useState(1);
   const [timetableOffset, setTimetableOffset] = useState(0);
   const [timetableLoading, setTimetableLoading] = useState(false);
+
+  const [lastTimetable, setLastTimetable] = useState(null);
 
   const {control, handleSubmit, watch, setValue} = useForm({
     mode: "onTouched",
@@ -149,6 +152,8 @@ const ChooseTimetable = ({navigation}) => {
         "lastTimetable",
         JSON.stringify(data.timetable),
       );
+
+      setLastTimetable(data.timetable);
     } catch (e) {
       console.log(e);
     }
@@ -159,8 +164,9 @@ const ChooseTimetable = ({navigation}) => {
       const lastTimetable = JSON.parse(
         await AsyncStorage.getItem("lastTimetable"),
       );
+
       if (lastTimetable) {
-        navigation.navigate("Timetable", {timetable: lastTimetable});
+        setLastTimetable(lastTimetable);
       }
     } catch (e) {
       console.log(e);
@@ -173,135 +179,156 @@ const ChooseTimetable = ({navigation}) => {
 
   useEffect(() => {
     resetTimetable();
-
-    if (group) {
-      onTimetableEndReached();
-    }
   }, [group]);
 
+  useEffect(() => {
+    if (group && timetableOffset === 0) {
+      onTimetableEndReached();
+    }
+  }, [group, timetableOffset]);
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={[mainStyles.screen, mainStyles.screenCenter]}>
-          <View style={[mainStyles.container, mainStyles.form]}>
-            <Controller
-              control={control}
-              name={"university"}
-              rules={{
-                required: "Необходимо выбрать",
-              }}
-              render={({
-                field: {value, onBlur, onChange},
-                fieldState: {error, invalid},
-              }) => {
-                return (
-                  <View style={styles.control}>
-                    <FlatInputPicker
-                      items={universities}
-                      selectedValue={value}
-                      label="University"
-                      invalid={invalid}
-                      loading={universityLoading}
-                      onValueChange={onChange}
-                      onBlur={onBlur}
-                      onEndReached={onUniversityEndReached}
-                    />
-                    {invalid && (
-                      <Text style={mainStyles.inputError}>{error.message}</Text>
-                    )}
-                  </View>
-                );
-              }}
-            />
-
-            <Controller
-              control={control}
-              name={"group"}
-              rules={{
-                required: "Необходимо выбрать",
-              }}
-              render={({
-                field: {value, onBlur, onChange},
-                fieldState: {error, invalid},
-              }) => {
-                return (
-                  <View style={styles.control}>
-                    <FlatInputPicker
-                      items={groups}
-                      selectedValue={value}
-                      label="Group"
-                      invalid={invalid}
-                      disabled={!university}
-                      loading={groupLoading}
-                      onValueChange={onChange}
-                      onBlur={onBlur}
-                      onEndReached={onGroupEndReached}
-                    />
-                    {university && invalid && (
-                      <Text style={mainStyles.inputError}>{error.message}</Text>
-                    )}
-                  </View>
-                );
-              }}
-            />
-
-            <Controller
-              control={control}
-              name={"timetable"}
-              rules={{
-                required: "Необходимо выбрать",
-              }}
-              render={({
-                field: {value, onBlur, onChange},
-                fieldState: {error, invalid},
-              }) => {
-                return (
-                  <View style={styles.control}>
-                    <FlatInputPicker
-                      items={timetables}
-                      selectedValue={value}
-                      label="Timetable"
-                      invalid={invalid}
-                      disabled={!group}
-                      loading={timetableLoading}
-                      onValueChange={onChange}
-                      onBlur={onBlur}
-                      onEndReached={onTimetableEndReached}
-                    />
-                    {group && invalid && (
-                      <Text style={mainStyles.inputError}>{error.message}</Text>
-                    )}
-                  </View>
-                );
-              }}
-            />
-
-            <Button
-              text={"Получить"}
-              style={mainStyles.mt5}
-              onPress={handleSubmit(onSubmit)}
-              type={"primary"}
-            />
-            {!authStatus && (
-              <View style={styles.alternative}>
-                <Link
-                  to="/Auth"
-                  text="Вход"
-                  style={mainStyles.mr3}
-                  textStyle={styles.alternativeLink}
+    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView>
+            <View style={[mainStyles.container, mainStyles.form]}>
+              {lastTimetable && (
+                <TimetableItem
+                  style={styles.lastOpened}
+                  timetable={lastTimetable}
+                  onPress={() => {
+                    navigation.navigate("Timetable", {
+                      timetable: lastTimetable,
+                    });
+                  }}
                 />
-                <Link
-                  to="/Registration"
-                  text="Регистрация"
-                  textStyle={styles.alternativeLink}
-                />
-              </View>
-            )}
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+              )}
+              <Controller
+                control={control}
+                name={"university"}
+                rules={{
+                  required: "Необходимо выбрать",
+                }}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View style={styles.control}>
+                      <FlatInputPicker
+                        items={universities}
+                        selectedValue={value}
+                        label="University"
+                        invalid={invalid}
+                        loading={universityLoading}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        onEndReached={onUniversityEndReached}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
+              />
+
+              <Controller
+                control={control}
+                name={"group"}
+                rules={{
+                  required: "Необходимо выбрать",
+                }}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View style={styles.control}>
+                      <FlatInputPicker
+                        items={groups}
+                        selectedValue={value}
+                        label="Group"
+                        invalid={invalid}
+                        disabled={!university}
+                        loading={groupLoading}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        onEndReached={onGroupEndReached}
+                      />
+                      {university && invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
+              />
+
+              <Controller
+                control={control}
+                name={"timetable"}
+                rules={{
+                  required: "Необходимо выбрать",
+                }}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View style={styles.control}>
+                      <FlatInputPicker
+                        items={timetables}
+                        selectedValue={value}
+                        label="Timetable"
+                        invalid={invalid}
+                        disabled={!group}
+                        loading={timetableLoading}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        onEndReached={onTimetableEndReached}
+                      />
+                      {group && invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
+              />
+
+              <Button
+                text={"Получить"}
+                style={mainStyles.mt5}
+                onPress={handleSubmit(onSubmit)}
+                type={"primary"}
+              />
+              {!authStatus && (
+                <View style={styles.alternative}>
+                  <Link
+                    to="/Auth"
+                    text="Вход"
+                    style={mainStyles.mr3}
+                    textStyle={styles.alternativeLink}
+                  />
+                  <Link
+                    to="/Registration"
+                    text="Регистрация"
+                    textStyle={styles.alternativeLink}
+                  />
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
