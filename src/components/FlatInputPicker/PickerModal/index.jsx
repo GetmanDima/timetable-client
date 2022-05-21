@@ -51,7 +51,7 @@ const PickerModal = ({
           style={[
             styles.itemsWrapper,
             {
-              height: 55 * (visibleItems.length - 1) + (loading ? 60 : 30),
+              height: 55 * (visibleItems.length - 1) + (loading ? 60 : 31),
             },
             style,
           ]}>
