@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Pressable, Text} from "react-native";
 import PropTypes from "prop-types";
 import {
@@ -28,9 +28,16 @@ const Button = ({
     setIsPressed(true);
   };
 
-  const onPressOut = () => {
+  let onPressOut = () => {
     setIsPressed(false);
   };
+
+  // exclude memory leak
+  useEffect(() => {
+    return () => {
+      onPressOut = () => {};
+    };
+  }, []);
 
   return (
     <Pressable
