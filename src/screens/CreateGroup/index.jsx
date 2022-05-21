@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {View, Keyboard, Text} from "react-native";
+import {View, Keyboard, Text, ScrollView} from "react-native";
 import {useForm, Controller} from "react-hook-form";
 import {
   Button,
@@ -19,10 +19,10 @@ import styles from "./styles";
 const CreateGroup = ({navigation}) => {
   const dispatch = useDispatch();
 
-  const {accessToken} = useSelector(state => {
+  const {authStatus, accessToken} = useSelector(state => {
     return {
+      authStatus: state.auth.status,
       accessToken: state.auth.accessToken,
-      user: state.auth.user,
     };
   });
 
@@ -164,6 +164,15 @@ const CreateGroup = ({navigation}) => {
     },
   ];
 
+  useEffect(() => {
+    if (!authStatus) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: "Auth"}],
+      });
+    }
+  }, [authStatus]);
+
   return (
     <View style={[mainStyles.screen, mainStyles.screenCenter]}>
       <Modal
@@ -172,10 +181,6 @@ const CreateGroup = ({navigation}) => {
         visible={successModalVisible}
         onPress={() => {
           dispatch(logout());
-          navigation.reset({
-            index: 0,
-            routes: [{name: "Auth"}],
-          });
         }}
       />
       <Modal
@@ -187,186 +192,190 @@ const CreateGroup = ({navigation}) => {
           setErrorModalVisible(false);
         }}
       />
-      <View style={[mainStyles.container, mainStyles.form]}>
-        {loading && <Loader />}
-        <Controller
-          control={control}
-          name={"university"}
-          rules={{
-            required: "Необходимо выбрать",
-          }}
-          render={({
-            field: {value, onBlur, onChange},
-            fieldState: {error, invalid},
-          }) => {
-            return (
-              <View>
-                <NewItemModal
-                  visible={newUniversityModalVisible}
-                  header={"Добавить университет"}
-                  inputs={newUniversityModalInputs}
-                  setVisible={setNewUniversityModalVisible}
-                  setValue={university => {
-                    resetUniversity();
-                    setUniversities([
-                      {
-                        label: university.name,
-                        value: university,
-                        visible: false,
-                      },
-                    ]);
-                    onChange(university);
-                    onBlur();
-                  }}
-                  requestCreateItem={(...params) => {
-                    return requestCreateUniversity(accessToken, ...params);
-                  }}
-                />
+      <ScrollView>
+        <View style={[mainStyles.container, mainStyles.form]}>
+          {loading && <Loader />}
+          <Controller
+            control={control}
+            name={"university"}
+            rules={{
+              required: "Необходимо выбрать",
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
                 <View>
-                  <View style={styles.pickerWithButton}>
-                    <FlatInputPicker
-                      items={universities}
-                      selectedValue={value}
-                      label="Университет"
-                      invalid={invalid}
-                      loading={universityLoading}
-                      onValueChange={onChange}
-                      onBlur={onBlur}
-                      onEndReached={onUniversityEndReached}
-                      style={{width: 230}}
-                    />
-                    <Button
-                      text="+"
-                      onPress={() => {
-                        setNewUniversityModalVisible(true);
-                      }}
-                      style={styles.pickerButton}
-                    />
-                    {invalid && (
-                      <Text style={mainStyles.inputError}>{error.message}</Text>
-                    )}
+                  <NewItemModal
+                    visible={newUniversityModalVisible}
+                    header={"Добавить университет"}
+                    inputs={newUniversityModalInputs}
+                    setVisible={setNewUniversityModalVisible}
+                    setValue={university => {
+                      resetUniversity();
+                      setUniversities([
+                        {
+                          label: university.name,
+                          value: university,
+                          visible: false,
+                        },
+                      ]);
+                      onChange(university);
+                      onBlur();
+                    }}
+                    requestCreateItem={(...params) => {
+                      return requestCreateUniversity(accessToken, ...params);
+                    }}
+                  />
+                  <View>
+                    <View style={styles.pickerWithButton}>
+                      <FlatInputPicker
+                        items={universities}
+                        selectedValue={value}
+                        label="Университет"
+                        invalid={invalid}
+                        loading={universityLoading}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        onEndReached={onUniversityEndReached}
+                        style={{width: 230}}
+                      />
+                      <Button
+                        text="+"
+                        onPress={() => {
+                          setNewUniversityModalVisible(true);
+                        }}
+                        style={styles.pickerButton}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 </View>
-              </View>
-            );
-          }}
-        />
-        <Controller
-          control={control}
-          name={"groupName"}
-          rules={{
-            required: "Необходимо заполнить",
-            minLength: {
-              value: 3,
-              message: "Минимальная длина 3",
-            },
-            maxLength: {
-              value: 100,
-              message: "Максимальная длина 100",
-            },
-          }}
-          render={({
-            field: {value, onBlur, onChange},
-            fieldState: {error, invalid},
-          }) => {
-            return (
-              <View>
-                <FlatTextInput
-                  value={value}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  invalid={invalid}
-                  label="Группа"
-                  editable={university !== undefined}
-                  style={mainStyles.mt3}
-                />
-                {invalid && (
-                  <Text style={mainStyles.inputError}>{error.message}</Text>
-                )}
-              </View>
-            );
-          }}
-        />
+              );
+            }}
+          />
+          <Controller
+            control={control}
+            name={"groupName"}
+            rules={{
+              required: "Необходимо заполнить",
+              minLength: {
+                value: 3,
+                message: "Минимальная длина 3",
+              },
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Группа"
+                    editable={university !== undefined}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-        <Controller
-          control={control}
-          name={"courseNumber"}
-          rules={{
-            min: {
-              value: 1,
-              message: "min 1",
-            },
-            max: {
-              value: 15,
-              message: "max 15",
-            },
-          }}
-          render={({
-            field: {value, onBlur, onChange},
-            fieldState: {error, invalid},
-          }) => {
-            return (
-              <View>
-                <FlatTextInput
-                  value={value}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  invalid={invalid}
-                  label="Курс"
-                  editable={university !== undefined}
-                  style={mainStyles.mt3}
-                />
-                {invalid && (
-                  <Text style={mainStyles.inputError}>{error.message}</Text>
-                )}
-              </View>
-            );
-          }}
-        />
+          <Controller
+            control={control}
+            name={"courseNumber"}
+            rules={{
+              min: {
+                value: 1,
+                message: "min 1",
+              },
+              max: {
+                value: 15,
+                message: "max 15",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Курс"
+                    editable={university !== undefined}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-        <Controller
-          control={control}
-          name={"admissionYear"}
-          rules={{
-            min: {
-              value: 2000,
-              message: "min 2000",
-            },
-            max: {
-              value: 2022,
-              message: "max 2022",
-            },
-          }}
-          render={({
-            field: {value, onBlur, onChange},
-            fieldState: {error, invalid},
-          }) => {
-            return (
-              <View>
-                <FlatTextInput
-                  value={value}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  invalid={invalid}
-                  label="Год поступления"
-                  editable={university !== undefined}
-                  style={mainStyles.mt3}
-                />
-                {invalid && (
-                  <Text style={mainStyles.inputError}>{error.message}</Text>
-                )}
-              </View>
-            );
-          }}
-        />
+          <Controller
+            control={control}
+            name={"admissionYear"}
+            rules={{
+              min: {
+                value: 2000,
+                message: "min 2000",
+              },
+              max: {
+                value: 2022,
+                message: "max 2022",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Год поступления"
+                    editable={university !== undefined}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-        <Button
-          text="Создать группу"
-          style={[mainStyles.mt5, mainStyles.mb5]}
-          onPress={handleSubmit(onSubmit)}
-          type={"primary"}
-        />
-      </View>
+          <Button
+            text="Создать группу"
+            style={[mainStyles.mt5, mainStyles.mb5]}
+            onPress={handleSubmit(onSubmit)}
+            type={"primary"}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
