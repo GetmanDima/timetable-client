@@ -76,7 +76,7 @@ const Registration = ({navigation}) => {
   };
 
   return (
-    <View style={mainStyles.screen}>
+    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
       {loading && <Loader />}
       <Modal
         header="Успешная регистрация"

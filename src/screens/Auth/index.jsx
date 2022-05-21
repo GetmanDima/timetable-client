@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import {useForm, Controller} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
@@ -58,120 +59,126 @@ const Auth = ({navigation}) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={[mainStyles.screen, mainStyles.screenCenter]}>
-          <View style={[mainStyles.container, mainStyles.form]}>
-            {authLoading && <Loader />}
+    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView>
+            <View style={[mainStyles.container, mainStyles.form]}>
+              {authLoading && <Loader />}
 
-            <Modal
-              header="Ошибка авторизации"
-              body={authErrors.join("\n")}
-              type="danger"
-              visible={errorModalVisible}
-              onPress={() => {
-                setErrorModalVisible(false);
-              }}
-            />
-
-            <Controller
-              control={control}
-              name={"email"}
-              rules={{
-                required: "Необходимо заполнить",
-                maxLength: {
-                  value: 100,
-                  message: "Максимальная длина 100",
-                },
-                pattern: {
-                  value: EMAIL_REGEX,
-                  message: "Не является email",
-                },
-              }}
-              render={({
-                field: {value, onBlur, onChange},
-                fieldState: {error, invalid},
-              }) => {
-                return (
-                  <View>
-                    <FlatTextInput
-                      value={value}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      invalid={invalid}
-                      label={"Email"}
-                      autoFocus={true}
-                    />
-                    {invalid && (
-                      <Text style={mainStyles.inputError}>{error.message}</Text>
-                    )}
-                  </View>
-                );
-              }}
-            />
-
-            <Controller
-              control={control}
-              name={"password"}
-              rules={{
-                required: "Необходимо заполнить",
-                minLength: {
-                  value: 3,
-                  message: "Минимальная длина 3",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "Максимальная длина 100",
-                },
-              }}
-              render={({
-                field: {value, onBlur, onChange},
-                fieldState: {error, invalid},
-              }) => {
-                return (
-                  <View style={mainStyles.mt3}>
-                    <FlatTextInput
-                      value={value}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      invalid={invalid}
-                      label={"Password"}
-                    />
-                    {invalid && (
-                      <Text style={mainStyles.inputError}>{error.message}</Text>
-                    )}
-                  </View>
-                );
-              }}
-            />
-
-            <Button
-              text="Вход"
-              style={mainStyles.mt5}
-              onPress={handleSubmit(onSubmit)}
-              type="primary"
-            />
-            <View style={[styles.alternative, mainStyles.mt5]}>
-              <Text style={styles.alternativeText}>Не зарегистированы?</Text>
-              <Link
-                to="/Registration"
-                text="Зарегистрироваться"
-                textStyle={styles.alternativeLink}
+              <Modal
+                header="Ошибка авторизации"
+                body={authErrors.join("\n")}
+                type="danger"
+                visible={errorModalVisible}
+                onPress={() => {
+                  setErrorModalVisible(false);
+                }}
               />
-            </View>
-            <View style={[styles.alternative, mainStyles.mt2]}>
-              <Text style={styles.alternativeText}>или перейти к</Text>
-              <Link
-                to="/ChooseTimetable"
-                text="Выбору расписания"
-                textStyle={styles.alternativeLink}
+
+              <Controller
+                control={control}
+                name={"email"}
+                rules={{
+                  required: "Необходимо заполнить",
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                  pattern: {
+                    value: EMAIL_REGEX,
+                    message: "Не является email",
+                  },
+                }}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label={"Email"}
+                        autoFocus={true}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
               />
+
+              <Controller
+                control={control}
+                name={"password"}
+                rules={{
+                  required: "Необходимо заполнить",
+                  minLength: {
+                    value: 3,
+                    message: "Минимальная длина 3",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                }}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View style={mainStyles.mt3}>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label={"Password"}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
+              />
+
+              <Button
+                text="Вход"
+                style={mainStyles.mt5}
+                onPress={handleSubmit(onSubmit)}
+                type="primary"
+              />
+              <View style={[styles.alternative, mainStyles.mt5]}>
+                <Text style={styles.alternativeText}>Не зарегистированы?</Text>
+                <Link
+                  to="/Registration"
+                  text="Зарегистрироваться"
+                  textStyle={styles.alternativeLink}
+                />
+              </View>
+              <View style={[styles.alternative, mainStyles.mt2]}>
+                <Text style={styles.alternativeText}>или перейти к</Text>
+                <Link
+                  to="/ChooseTimetable"
+                  text="Выбору расписания"
+                  textStyle={styles.alternativeLink}
+                />
+              </View>
             </View>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
