@@ -1,10 +1,15 @@
+import "moment/locale/ru";
+import moment from "moment";
 import {useState, useEffect, useMemo} from "react";
 import {View, ScrollView, Text} from "react-native";
+import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import {useDispatch, useSelector} from "react-redux";
+import CalendarStrip from "react-native-calendar-strip";
+import {weekDays} from "../../constants";
 import {capitalizeFirstLetter} from "../../utils";
 import {getTimetableLessons} from "../../store/actions/timetableLesson";
-import {Button, Loader, TimetableLesson} from "../../components";
-import {weekDays} from "../../constants";
+import {Loader, TimetableLesson} from "../../components";
+import {whiteColor} from "../../styles/constants";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
@@ -13,7 +18,7 @@ const Timetable = ({route, navigation}) => {
 
   const dispatch = useDispatch();
 
-  const {weekDaysWithLessons, loading, errors} = useSelector(state => {
+  const {weekDaysWithLessons, loading} = useSelector(state => {
     return {
       weekDaysWithLessons:
         state.timetableLesson.weekDaysWithLessons[timetable.id],
@@ -22,7 +27,9 @@ const Timetable = ({route, navigation}) => {
     };
   });
 
-  const [currentWeekDay, setCurrentWeekDay] = useState("monday");
+  const [currentWeekDay, setCurrentWeekDay] = useState(
+    weekDays[moment().weekday()],
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -69,27 +76,47 @@ const Timetable = ({route, navigation}) => {
       });
   }, [weekDaysWithLessons, currentWeekDay]);
 
-  const shortWeekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
-
   return (
     <View style={mainStyles.screen}>
       {loading && <Loader />}
-      <ScrollView>
-        <View style={mainStyles.container}>
-          <View style={styles.weekDays}>
-            {shortWeekDays.map((day, idx) => (
-              <Button
-                key={day}
-                onPress={() => setCurrentWeekDay(weekDays[idx])}
-                text={day}
-                style={styles.weekDay}
-                type={currentWeekDay === weekDays[idx] ? "primary" : "dark"}
+      <View>
+        <CalendarStrip
+          scrollable={true}
+          scrollerPaging={true}
+          scrollToOnSetSelectedDate={false}
+          updateWeek={true}
+          minDate={moment().subtract(30, "days")}
+          maxDate={moment().add(30, "days")}
+          selectedDate={moment()}
+          style={styles.calendar}
+          calendarHeaderStyle={styles.calendarHeader}
+          dateNumberStyle={styles.dateNumber}
+          dateNameStyle={styles.dateName}
+          highlightDateNumberStyle={styles.selectedDateNumber}
+          highlightDateNameStyle={styles.selectedDateName}
+          leftSelector={
+            <View>
+              <MaterialCommunityIcon
+                name="chevron-left"
+                size={30}
+                color={whiteColor}
               />
-            ))}
-          </View>
-
-          <View style={{alignItems: "center"}}>{weekDayWithLessons}</View>
-        </View>
+            </View>
+          }
+          rightSelector={
+            <View>
+              <MaterialCommunityIcon
+                name="chevron-right"
+                size={30}
+                color={whiteColor}
+              />
+            </View>
+          }
+          onDateSelected={date => setCurrentWeekDay(weekDays[date.weekday()])}
+        />
+      </View>
+      <ScrollView>
+        <View style={styles.day}>{weekDayWithLessons}</View>
       </ScrollView>
     </View>
   );

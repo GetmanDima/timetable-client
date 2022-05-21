@@ -1,15 +1,41 @@
 import {StyleSheet} from "react-native";
-import {lightColor, h1FontSize} from "../../styles/constants";
+import {
+  lightColor,
+  h1FontSize,
+  whiteColor,
+  primaryColor,
+  darkColor,
+  lightDarkColor,
+} from "../../styles/constants";
 
 export default StyleSheet.create({
-  weekDays: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
+  calendar: {
+    height: 110,
+    paddingTop: 20,
+    paddingBottom: 10,
+    backgroundColor: lightDarkColor,
+    borderBottomWidth: 1,
+    borderBottomColor: darkColor,
   },
-  weekDay: {
-    paddingHorizontal: 10,
+  calendarHeader: {
+    color: whiteColor,
+    fontSize: 16,
+  },
+  dateNumber: {
+    color: whiteColor,
+    fontSize: 16,
+  },
+  dateName: {
+    color: whiteColor,
+    fontSize: 10,
+  },
+  selectedDateNumber: {
+    color: primaryColor,
+    fontSize: 16,
+  },
+  selectedDateName: {
+    color: primaryColor,
+    fontSize: 10,
   },
   weekTypeText: {
     marginTop: 50,
@@ -18,5 +44,9 @@ export default StyleSheet.create({
     color: lightColor,
     fontSize: h1FontSize,
     fontWeight: "bold",
+  },
+  day: {
+    alignItems: "center",
+    marginBottom: 150,
   },
 });
