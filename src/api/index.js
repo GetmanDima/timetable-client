@@ -6,7 +6,7 @@ export const getHost = () => {
     baseURL: API_URL,
   });
 };
-
+console.log(API_URL);
 export const getAuthHost = accessToken => {
   const $authHost = axios.create({
     baseURL: API_URL,

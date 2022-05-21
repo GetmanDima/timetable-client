@@ -65,8 +65,7 @@ const CreateTimetable = ({navigation}) => {
           }),
         );
       })
-      .catch(e => {
-        console.log(e.response.data);
+      .catch(() => {
         setLoading(false);
         setErrors(["Ошибка создания таблицы"]);
       });
