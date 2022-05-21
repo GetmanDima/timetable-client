@@ -9,17 +9,13 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import {useForm, Controller} from "react-hook-form";
-import {useDispatch, useSelector} from "react-redux";
-import {getIdFromLocation} from "../../utils";
+import {useSelector} from "react-redux";
 import {requestCreateTimetable} from "../../api/timetable";
 import {Button, Loader, FlatTextInput, Modal} from "../../components";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
-import {addTimetable} from "../../store/actions/timetable";
 
 const CreateTimetable = ({navigation}) => {
-  const dispatch = useDispatch();
-
   const {accessToken} = useSelector(state => {
     return {
       accessToken: state.auth.accessToken,
@@ -53,17 +49,11 @@ const CreateTimetable = ({navigation}) => {
     setLoading(true);
 
     requestCreateTimetable(accessToken, {name: data.name})
-      .then(res => {
+      .then(() => {
         setStatus(true);
         setLoading(false);
         setErrors([]);
         reset();
-        dispatch(
-          addTimetable({
-            id: getIdFromLocation(res.headers["location"]),
-            name: data.name,
-          }),
-        );
       })
       .catch(() => {
         setLoading(false);
@@ -78,7 +68,10 @@ const CreateTimetable = ({navigation}) => {
         header="Создание таблицы"
         body="Таблица успешно создана"
         onPress={() => {
-          navigation.navigate("Timetables");
+          navigation.reset({
+            index: 0,
+            routes: [{name: "Timetables"}],
+          });
           setStatus(false);
           setLoading(false);
           setErrors([]);

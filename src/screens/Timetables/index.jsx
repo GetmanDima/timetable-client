@@ -1,28 +1,55 @@
-import {useEffect} from "react";
+import {useState, useEffect} from "react";
 import {ScrollView, View} from "react-native";
-import {useSelector, useDispatch} from "react-redux";
-import {Button, Loader, TimetableItem} from "../../components";
-import {getTimetables} from "../../store/actions/timetable";
+import {useSelector} from "react-redux";
+import {fetchTimetables} from "../../api/timetable";
+import {Button, Loader, Modal, TimetableItem} from "../../components";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
 const Timetables = ({navigation}) => {
-  const dispatch = useDispatch();
-
-  const {timetables, loading} = useSelector(state => {
+  const {accessToken} = useSelector(state => {
     return {
-      timetables: state.timetable.timetables,
-      loading: state.timetable.loading,
+      accessToken: state.auth.accessToken,
     };
   });
 
+  const [timetables, setTimetables] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState([]);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+
   useEffect(() => {
-    dispatch(getTimetables({parsed: false}));
+    setLoading(true);
+
+    fetchTimetables(accessToken, {parsed: false})
+      .then(res => {
+        setTimetables(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setErrors([["Ошибка при получении расписания"]]);
+        setLoading(false);
+      });
   }, []);
+
+  useEffect(() => {
+    if (errors.length > 0) {
+      setErrorModalVisible(true);
+    }
+  }, [errors]);
 
   return (
     <View style={mainStyles.screen}>
       {loading && <Loader />}
+      <Modal
+        header="Создание таблицы"
+        body={errors.join("\n")}
+        type="danger"
+        visible={errorModalVisible}
+        onPress={() => {
+          setErrorModalVisible(false);
+        }}
+      />
       <Button
         disabled={false}
         text="+"
