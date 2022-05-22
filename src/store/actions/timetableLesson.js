@@ -1,8 +1,32 @@
 import {fetchTimetableLessons} from "../../api/timetable";
 import {
+  START_LOADING_TIMETABLE_LESSONS,
+  FINISH_LOADING_TIMETABLE_LESSONS,
   SUCCESS_GET_TIMETABLE_LESSONS,
   FAIL_GET_TIMETABLE_LESSONS,
+  RESET_TIMETABLE_LESSONS_ERRORS,
 } from "../actionTypes/timetableLesson";
+
+export const startLoadingTimetableLessons = timetableId => {
+  return {
+    type: START_LOADING_TIMETABLE_LESSONS,
+    payload: {timetableId},
+  };
+};
+
+export const finishLoadingTimetableLessons = timetableId => {
+  return {
+    type: FINISH_LOADING_TIMETABLE_LESSONS,
+    payload: {timetableId},
+  };
+};
+
+export const resetTimetableLessonsErrors = timetableId => {
+  return {
+    type: RESET_TIMETABLE_LESSONS_ERRORS,
+    payload: {timetableId},
+  };
+};
 
 export const successGetTimetableLessons = (
   timetableId,
@@ -21,15 +45,18 @@ export const failGetTimetableLessons = (timetableId, errors) => {
   };
 };
 
-export const getTimetableLessons = timetableId => {
+export const getTimetableLessons = (timetableId, {weekDay = ""}) => {
   return async (dispatch, getState) => {
-    fetchTimetableLessons(getState().auth.accessToken, timetableId)
+    dispatch(startLoadingTimetableLessons(timetableId));
+
+    fetchTimetableLessons(getState().auth.accessToken, timetableId, {weekDay})
       .then(res => {
         dispatch(
-          successGetTimetableLessons(
-            timetableId,
-            toWeekDaysWithLessons(res.data),
-          ),
+          successGetTimetableLessons(timetableId, {
+            ...(getState().timetableLesson.weekDaysWithLessons[timetableId] ??
+              {}),
+            ...toWeekDaysWithLessons(res.data),
+          }),
         );
       })
       .catch(() => {
@@ -43,58 +70,17 @@ export const getTimetableLessons = timetableId => {
 };
 
 const toWeekDaysWithLessons = lessons => {
-  const defaultWeekTypeName = "common";
-
   return lessons
     ? lessons.reduce((weekDays, lesson) => {
-        const newLesson = {
-          id: lesson.id,
-          weekDay: lesson.weekDay,
-          format: lesson.format,
-          room: lesson.room,
-          weekType: lesson.WeekType,
-          classType: lesson.classType,
-          classTime: lesson.ClassTime,
-          teacher: lesson.Teacher,
-          subject: lesson.Subject,
-        };
-
-        const weekDay = weekDays[newLesson.weekDay]
-          ? weekDays[newLesson.weekDay]
-          : {};
-
-        let newWeekType = {};
-
-        if (newLesson.weekDay) {
-          const weekTypeName = newLesson.weekType.name
-            ? newLesson.weekType.name
-            : defaultWeekTypeName;
-
-          if (
-            weekDays[newLesson.weekDay] &&
-            weekDays[newLesson.weekDay][weekTypeName]
-          ) {
-            newWeekType = {
-              [weekTypeName]: [
-                ...weekDays[newLesson.weekDay][weekTypeName],
-                newLesson,
-              ],
-            };
-          } else {
-            newWeekType = {
-              [weekTypeName]: [newLesson],
-            };
-          }
-        }
+        const weekDayLessons = weekDays[lesson.weekDay]
+          ? weekDays[lesson.weekDay]
+          : [];
 
         let newWeekDay = {};
 
-        if (newLesson.weekDay) {
+        if (lesson.weekDay) {
           newWeekDay = {
-            [newLesson.weekDay]: {
-              ...weekDay,
-              ...newWeekType,
-            },
+            [lesson.weekDay]: [...weekDayLessons, lesson],
           };
         }
 

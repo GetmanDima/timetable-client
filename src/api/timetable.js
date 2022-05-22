@@ -25,7 +25,28 @@ export const fetchGroupTimetables = (accessToken, groupId, {limit, offset}) => {
   });
 };
 
-export const fetchTimetableLessons = (accessToken, timetableId) => {
+export const fetchTimetable = (
+  accessToken,
+  timetableId,
+  include = ["WeekType", "ClassTime", "Teacher", "Subject"],
+) => {
   const $host = getAuthHost(accessToken);
-  return $host.get(`/v1/timetables/${timetableId}/lessons`);
+  return $host.get(`/v1/timetables/${timetableId}`, {
+    params: {include: JSON.stringify(include)},
+  });
+};
+
+export const fetchTimetableLessons = (
+  accessToken,
+  timetableId,
+  {weekDay = ""},
+) => {
+  const params = {};
+
+  if (weekDay) {
+    params.weekDay = weekDay;
+  }
+
+  const $host = getAuthHost(accessToken);
+  return $host.get(`/v1/timetables/${timetableId}/lessons`, {params});
 };

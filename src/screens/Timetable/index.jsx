@@ -7,23 +7,49 @@ import {useDispatch, useSelector} from "react-redux";
 import CalendarStrip from "react-native-calendar-strip";
 import {weekDays} from "../../constants";
 import {capitalizeFirstLetter} from "../../utils";
-import {getTimetableLessons} from "../../store/actions/timetableLesson";
-import {Loader, TimetableLesson} from "../../components";
+import {
+  getTimetable,
+  resetTimetableErrors,
+} from "../../store/actions/timetable";
+import {
+  finishLoadingTimetableLessons,
+  getTimetableLessons,
+  resetTimetableLessonsErrors,
+} from "../../store/actions/timetableLesson";
+import {Loader, Modal, TimetableLesson} from "../../components";
 import {whiteColor} from "../../styles/constants";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
 const Timetable = ({route, navigation}) => {
-  const {timetable} = route.params;
+  const {timetable: paramTimetable} = route.params;
 
   const dispatch = useDispatch();
 
-  const {weekDaysWithLessons, loading} = useSelector(state => {
+  const {
+    timetable,
+    weekTypes,
+    classTimes,
+    teachers,
+    subjects,
+    timetableLoading,
+    timetableErrors,
+    weekDaysWithLessons,
+    lessonLoading,
+    lessonErrors,
+  } = useSelector(state => {
     return {
+      timetable: state.timetable.timetables[paramTimetable.id],
+      weekTypes: state.timetable.weekTypes[paramTimetable.id],
+      classTimes: state.timetable.classTimes[paramTimetable.id],
+      teachers: state.timetable.teachers[paramTimetable.id],
+      subjects: state.timetable.subjects[paramTimetable.id],
+      timetableLoading: state.timetable.loadings[paramTimetable.id],
+      timetableErrors: state.timetable.errors[paramTimetable.id],
       weekDaysWithLessons:
-        state.timetableLesson.weekDaysWithLessons[timetable.id],
-      loading: state.timetableLesson.loadings[timetable.id],
-      errors: state.timetableLesson.errors[timetable.id],
+        state.timetableLesson.weekDaysWithLessons[paramTimetable.id],
+      lessonLoading: state.timetableLesson.loadings[paramTimetable.id],
+      lessonErrors: state.timetableLesson.errors[paramTimetable.id],
     };
   });
 
@@ -31,54 +57,117 @@ const Timetable = ({route, navigation}) => {
     weekDays[moment().weekday()],
   );
 
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+
   useEffect(() => {
     navigation.setOptions({
-      title: `Расписание ${timetable.name}`,
+      title: `Расписание ${paramTimetable.name}`,
     });
 
-    if (!weekDaysWithLessons) {
-      dispatch(getTimetableLessons(timetable.id));
+    if (!timetable) {
+      dispatch(getTimetable(paramTimetable.id));
     }
   }, []);
 
-  const weekDayWithLessons = useMemo(() => {
+  useEffect(() => {
+    dispatch(finishLoadingTimetableLessons(paramTimetable.id));
+    dispatch(resetTimetableLessonsErrors(paramTimetable.id));
+
     if (!weekDaysWithLessons || !weekDaysWithLessons[currentWeekDay]) {
+      dispatch(
+        getTimetableLessons(paramTimetable.id, {weekDay: currentWeekDay}),
+      );
+    }
+  }, [currentWeekDay]);
+
+  useEffect(() => {
+    if (timetableErrors && timetableErrors.length > 0) {
+      setErrorModalVisible(true);
+    }
+  }, [timetableErrors]);
+
+  const weekTypesWithLessons = useMemo(() => {
+    if (!weekDaysWithLessons || !weekDaysWithLessons[currentWeekDay]) {
+      return {};
+    }
+
+    return weekDaysWithLessons[currentWeekDay].reduce((weekTypes, lesson) => {
+      const weekTypeLessons = weekTypes[lesson.weekTypeId]
+        ? weekTypes[lesson.weekTypeId]
+        : [];
+
+      return {...weekTypes, [lesson.weekTypeId]: [...weekTypeLessons, lesson]};
+    }, {});
+  }, [weekDaysWithLessons, currentWeekDay]);
+
+  const weekTypeItems = useMemo(() => {
+    if (timetableLoading) {
       return [];
     }
 
-    return Object.entries(weekDaysWithLessons[currentWeekDay])
-      .sort(([weekTypeName1], [weekTypeName2]) =>
-        weekTypeName1 > weekTypeName2 ? 1 : -1,
-      )
-      .map(([weekTypeName, lessons]) => {
-        const lessonItems = lessons.map(lesson => (
-          <TimetableLesson
-            key={lesson.id}
-            subject={lesson.subject}
-            teacher={lesson.teacher}
-            room={lesson.room}
-            classType={lesson.classType}
-            format={lesson.format}
-            startTime={lesson.classTime.startTime}
-            endTime={lesson.classTime.endTime}
-            style={mainStyles.mb4}
-          />
-        ));
+    return Object.entries(weekTypesWithLessons)
+      .sort(([weekTypeId1], [weekTypeId2]) => {
+        if (!weekTypes[weekTypeId1] || !weekTypes[weekTypeId2]) {
+          return 1;
+        }
+
+        return weekTypes[weekTypeId1].name > weekTypes[weekTypeId2].name
+          ? 1
+          : -1;
+      })
+      .map(([weekTypeId, lessons]) => {
+        const lessonItems = lessons
+          .sort(({classTimeId: classTimeId1}, {classTimeId: classTimeId2}) => {
+            if (!classTimes[classTimeId1] || !classTimes[classTimeId2]) {
+              return 1;
+            }
+
+            return classTimes[classTimeId1].startTime >
+              classTimes[classTimeId2].startTime
+              ? 1
+              : -1;
+          })
+          .map(lesson => {
+            return (
+              <TimetableLesson
+                key={lesson.id}
+                subject={subjects[lesson.subjectId]}
+                teacher={teachers[lesson.teacherId]}
+                room={lesson.room}
+                classType={lesson.classType}
+                format={lesson.format}
+                startTime={classTimes[lesson.classTimeId].startTime}
+                endTime={classTimes[lesson.classTimeId].endTime}
+                style={mainStyles.mb4}
+              />
+            );
+          });
 
         return (
-          <View key={weekTypeName}>
+          <View key={weekTypeId}>
             <Text style={styles.weekTypeText}>
-              {capitalizeFirstLetter(weekTypeName)}
+              {capitalizeFirstLetter(weekTypes[weekTypeId].name)}
             </Text>
             {lessonItems}
           </View>
         );
       });
-  }, [weekDaysWithLessons, currentWeekDay]);
+  }, [weekTypesWithLessons, timetableLoading]);
 
   return (
     <View style={mainStyles.screen}>
-      {loading && <Loader />}
+      {timetableLoading && <Loader />}
+      <Modal
+        header="Получение расписания"
+        body={timetableErrors ? timetableErrors.join("\n") : ""}
+        type="danger"
+        visible={errorModalVisible}
+        onPress={() => {
+          navigation.goBack();
+          setErrorModalVisible(false);
+          dispatch(resetTimetableErrors(paramTimetable.id));
+        }}
+      />
       <View>
         <CalendarStrip
           scrollable={true}
@@ -115,9 +204,19 @@ const Timetable = ({route, navigation}) => {
           onDateSelected={date => setCurrentWeekDay(weekDays[date.weekday()])}
         />
       </View>
-      <ScrollView>
-        <View style={styles.day}>{weekDayWithLessons}</View>
-      </ScrollView>
+      {lessonLoading ? (
+        <View style={styles.lessonLoading}>
+          <Text style={styles.lessonLoadingText}>Loading...</Text>
+        </View>
+      ) : lessonErrors && lessonErrors.length > 0 ? (
+        <View style={styles.lessonError}>
+          <Text style={styles.lessonErrorText}>{lessonErrors.join("\n")}</Text>
+        </View>
+      ) : (
+        <ScrollView>
+          <View style={styles.day}>{weekTypeItems}</View>
+        </ScrollView>
+      )}
     </View>
   );
 };

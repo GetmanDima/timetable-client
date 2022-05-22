@@ -6,6 +6,7 @@ import {
   primaryColor,
   darkColor,
   lightDarkColor,
+  dangerColor,
 } from "../../styles/constants";
 
 export default StyleSheet.create({
@@ -48,5 +49,22 @@ export default StyleSheet.create({
   day: {
     alignItems: "center",
     marginBottom: 150,
+  },
+  lessonLoading: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  lessonLoadingText: {
+    fontSize: h1FontSize,
+    color: whiteColor,
+  },
+  lessonError: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  lessonErrorText: {
+    fontSize: h1FontSize,
+    color: dangerColor,
+    textAlign: "center",
   },
 });
