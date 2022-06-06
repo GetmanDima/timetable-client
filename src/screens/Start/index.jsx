@@ -38,7 +38,7 @@ const Start = ({navigation}) => {
 
       setHasSuccessAuth(true);
 
-      if (user.groupId) {
+      if (user.groupId || user.type === "admin") {
         navigation.navigate("TabNavigation", {screen: "Timetables"});
       } else {
         navigation.reset({

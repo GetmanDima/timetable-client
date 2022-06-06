@@ -239,7 +239,7 @@ const CreateGroup = ({navigation}) => {
                         onValueChange={onChange}
                         onBlur={onBlur}
                         onEndReached={onUniversityEndReached}
-                        style={{width: 230}}
+                        style={styles.pickerWithButtonInput}
                       />
                       <Button
                         text="+"

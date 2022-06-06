@@ -56,6 +56,7 @@ const Timetable = ({route, navigation}) => {
   const [currentWeekDay, setCurrentWeekDay] = useState(
     weekDays[moment().weekday()],
   );
+  const [currentDate, setCurrentDate] = useState(moment());
 
   const [errorModalVisible, setErrorModalVisible] = useState(false);
 
@@ -91,13 +92,33 @@ const Timetable = ({route, navigation}) => {
       return {};
     }
 
-    return weekDaysWithLessons[currentWeekDay].reduce((weekTypes, lesson) => {
-      const weekTypeLessons = weekTypes[lesson.weekTypeId]
-        ? weekTypes[lesson.weekTypeId]
-        : [];
+    return weekDaysWithLessons[currentWeekDay]
+      .filter(lesson => {
+        if (lesson.activeFromDate && lesson.activeToDate) {
+          return (
+            currentDate.isAfter(moment(lesson.activeFromDate, "YYYY-MM-DD")) &&
+            currentDate.isBefore(
+              moment(lesson.activeToDate, "YYYY-MM-DD").add(1, "days"),
+            )
+          );
+        } else if (lesson.activeFromDate) {
+          return currentDate.isAfter(lesson.activeFromDate);
+        } else if (lesson.activeToDate) {
+          return currentDate.isBefore(lesson.activeToDate);
+        } else {
+          return true;
+        }
+      })
+      .reduce((weekTypes, lesson) => {
+        const weekTypeLessons = weekTypes[lesson.weekTypeId]
+          ? weekTypes[lesson.weekTypeId]
+          : [];
 
-      return {...weekTypes, [lesson.weekTypeId]: [...weekTypeLessons, lesson]};
-    }, {});
+        return {
+          ...weekTypes,
+          [lesson.weekTypeId]: [...weekTypeLessons, lesson],
+        };
+      }, {});
   }, [weekDaysWithLessons, currentWeekDay]);
 
   const weekTypeItems = useMemo(() => {
@@ -136,8 +157,8 @@ const Timetable = ({route, navigation}) => {
                 room={lesson.room}
                 classType={lesson.classType}
                 format={lesson.format}
-                startTime={classTimes[lesson.classTimeId].startTime}
-                endTime={classTimes[lesson.classTimeId].endTime}
+                startTime={(classTimes[lesson.classTimeId] ?? {}).startTime}
+                endTime={(classTimes[lesson.classTimeId] ?? {}).endTime}
                 style={mainStyles.mb4}
               />
             );
@@ -201,7 +222,10 @@ const Timetable = ({route, navigation}) => {
               />
             </View>
           }
-          onDateSelected={date => setCurrentWeekDay(weekDays[date.weekday()])}
+          onDateSelected={date => {
+            setCurrentWeekDay(weekDays[date.weekday()]);
+            setCurrentDate(date);
+          }}
         />
       </View>
       {lessonLoading ? (

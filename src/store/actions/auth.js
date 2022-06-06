@@ -63,6 +63,7 @@ export const login = (email, password) => {
         if (e.response.status === 401) {
           errors = ["Incorrect email or password"];
         } else {
+          console.log(e);
           errors = ["Login failed"];
         }
 

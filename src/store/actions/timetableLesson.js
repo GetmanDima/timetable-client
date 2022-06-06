@@ -5,6 +5,8 @@ import {
   SUCCESS_GET_TIMETABLE_LESSONS,
   FAIL_GET_TIMETABLE_LESSONS,
   RESET_TIMETABLE_LESSONS_ERRORS,
+  ADD_TIMETABLE_LESSON,
+  DELETE_TIMETABLE_LESSON,
 } from "../actionTypes/timetableLesson";
 
 export const startLoadingTimetableLessons = timetableId => {
@@ -45,6 +47,27 @@ export const failGetTimetableLessons = (timetableId, errors) => {
   };
 };
 
+export const addTimetableLesson = (timetableId, lesson) => {
+  return {
+    type: ADD_TIMETABLE_LESSON,
+    payload: {timetableId, lesson},
+  };
+};
+
+export const deleteTimetableLesson = (timetableId, lesson) => {
+  return {
+    type: DELETE_TIMETABLE_LESSON,
+    payload: {timetableId, lesson},
+  };
+};
+
+export const editTimetableLesson = (timetableId, oldLesson, newLesson) => {
+  return async dispatch => {
+    dispatch(deleteTimetableLesson(timetableId, oldLesson));
+    dispatch(addTimetableLesson(timetableId, newLesson));
+  };
+};
+
 export const getTimetableLessons = (timetableId, {weekDay = ""}) => {
   return async (dispatch, getState) => {
     dispatch(startLoadingTimetableLessons(timetableId));
@@ -53,6 +76,7 @@ export const getTimetableLessons = (timetableId, {weekDay = ""}) => {
       .then(res => {
         dispatch(
           successGetTimetableLessons(timetableId, {
+            [weekDay]: [],
             ...(getState().timetableLesson.weekDaysWithLessons[timetableId] ??
               {}),
             ...toWeekDaysWithLessons(res.data),

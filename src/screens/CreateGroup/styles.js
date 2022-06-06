@@ -7,6 +7,9 @@ export default StyleSheet.create({
     width: 300,
     justifyContent: "space-between",
   },
+  pickerWithButtonInput: {
+    width: 230,
+  },
   pickerButton: {
     width: 45,
     height: 45,

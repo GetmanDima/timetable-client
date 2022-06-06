@@ -26,3 +26,24 @@ export const capitalizeFirstLetter = string => {
 export const getIdFromLocation = location => {
   return parseInt(location.split("/").slice(-1)[0]);
 };
+
+export const removeItemFromArray = (array, index) => {
+  if (array.length === 0) {
+    return [];
+  }
+
+  return [
+    ...array.slice(0, index), // first part of the array, 0 to index (excluded)
+    ...array.slice(index + 1), // the rest, after the index
+  ];
+};
+
+export const removePropertyFromObject = (obj, propertyName) => {
+  return Object.keys(obj).reduce((newObj, prop) => {
+    if (prop === propertyName) {
+      return newObj;
+    }
+
+    return {...newObj, [prop]: obj[prop]};
+  }, {});
+};

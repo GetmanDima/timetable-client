@@ -100,7 +100,8 @@ const Registration = ({navigation}) => {
         }}
       />
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={100}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView>
             <View style={[mainStyles.container, mainStyles.form]}>

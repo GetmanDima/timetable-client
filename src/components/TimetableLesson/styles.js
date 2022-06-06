@@ -1,27 +1,28 @@
 import {StyleSheet} from "react-native";
+import {lightDarkColor, primaryColor, whiteColor} from "../../styles/constants";
 
 export default StyleSheet.create({
   timeTableLessonBlock: {
     width: "100%",
     borderRadius: 10,
-    backgroundColor: "#0F2238",
+    backgroundColor: lightDarkColor,
     paddingLeft: 19,
     paddingRight: 11,
     paddingVertical: 10,
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   notLesson: {
     width: "82%",
     height: 101,
     borderRadius: 10,
-    backgroundColor: "#0F2238",
+    backgroundColor: lightDarkColor,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   timeTableLessonText: {
     maxWidth: 230,
-    color: "#FFF"
+    color: whiteColor,
   },
   lessonInfo: {
     marginTop: 15,
@@ -34,48 +35,55 @@ export default StyleSheet.create({
     paddingHorizontal: 5,
     height: 30,
     borderRadius: 12,
-    borderColor: "#1976D2",
+    borderColor: primaryColor,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   teacherText: {
-    color: "#FFF",
+    color: whiteColor,
   },
   room: {
     maxWidth: 80,
     height: 30,
     paddingHorizontal: 5,
     borderRadius: 12,
-    borderColor: "#1976D2",
+    borderColor: primaryColor,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
   roomText: {
-    color: "#FFF",
+    color: whiteColor,
   },
   classTypeText: {
-    color: "#FFF",
+    color: whiteColor,
   },
   line: {
     width: 35,
     height: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: whiteColor,
   },
   formatText: {
-    color: "#FFF",
+    color: whiteColor,
   },
   lessonType: {
     alignItems: "center",
   },
   notLessonText: {
-    color: "#FFF",
+    color: whiteColor,
   },
   timeText: {
-    color: "#FFF",
+    color: whiteColor,
+    marginRight: "auto",
   },
   time: {
     marginBottom: 10,
-  }
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  icon: {
+    marginRight: 0,
+  },
 });

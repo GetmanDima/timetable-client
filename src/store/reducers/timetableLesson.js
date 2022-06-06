@@ -1,10 +1,31 @@
+import {removeItemFromArray} from "../../utils";
 import {
   START_LOADING_TIMETABLE_LESSONS,
   FINISH_LOADING_TIMETABLE_LESSONS,
   SUCCESS_GET_TIMETABLE_LESSONS,
   FAIL_GET_TIMETABLE_LESSONS,
   RESET_TIMETABLE_LESSONS_ERRORS,
+  ADD_TIMETABLE_LESSON,
+  DELETE_TIMETABLE_LESSON,
 } from "../actionTypes/timetableLesson";
+
+const deleteLesson = (weekDaysWithLessons, timetableId, lesson) => {
+  const timetableWeekDays = weekDaysWithLessons[timetableId];
+  const splitIndex = timetableWeekDays[lesson.weekDay].findIndex(
+    l => l.id === lesson.id,
+  );
+
+  return {
+    ...weekDaysWithLessons,
+    [timetableId]: {
+      ...timetableWeekDays,
+      [lesson.weekDay]: removeItemFromArray(
+        timetableWeekDays[lesson.weekDay],
+        splitIndex,
+      ),
+    },
+  };
+};
 
 const initialState = {
   // key - timetable id, value - timetable days
@@ -50,7 +71,33 @@ export default (state = initialState, action) => {
         loadings: {...state.loadings, [payload.timetableId]: false},
         errors: {...state.errors, [payload.timetableId]: payload.errors},
       };
-
+    case DELETE_TIMETABLE_LESSON:
+      return {
+        ...state,
+        weekDaysWithLessons: deleteLesson(
+          state.weekDaysWithLessons,
+          payload.timetableId,
+          payload.lesson,
+        ),
+      };
+    case ADD_TIMETABLE_LESSON:
+      return {
+        ...state,
+        weekDaysWithLessons: {
+          ...state.weekDaysWithLessons,
+          [payload.timetableId]: {
+            ...(state.weekDaysWithLessons[payload.timetableId] ?? {}),
+            [payload.lesson.weekDay]: [
+              ...(state.weekDaysWithLessons[payload.timetableId]
+                ? state.weekDaysWithLessons[payload.timetableId][
+                    payload.lesson.weekDay
+                  ] ?? []
+                : []),
+              payload.lesson,
+            ],
+          },
+        },
+      };
     default:
       return state;
   }

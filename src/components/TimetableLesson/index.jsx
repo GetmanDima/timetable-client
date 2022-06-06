@@ -1,5 +1,7 @@
 import {View, Text} from "react-native";
 import PropTypes from "prop-types";
+import MaterialIcon from "@expo/vector-icons/MaterialIcons";
+import {lightColor} from "../../styles/constants";
 import styles from "./styles";
 
 const TimetableLesson = ({
@@ -10,6 +12,10 @@ const TimetableLesson = ({
   room,
   classType,
   format,
+  edit,
+  remove,
+  onPressEdit,
+  onPressRemove,
   style,
 }) => {
   return (
@@ -22,6 +28,26 @@ const TimetableLesson = ({
           style={styles.timeText}>
           {startTime} - {endTime}
         </Text>
+        {edit && (
+          <MaterialIcon.Button
+            onPress={onPressEdit}
+            iconStyle={styles.icon}
+            backgroundColor={null}
+            name="edit"
+            size={23}
+            color={lightColor}
+          />
+        )}
+        {remove && (
+          <MaterialIcon.Button
+            onPress={onPressRemove}
+            iconStyle={styles.icon}
+            backgroundColor={null}
+            name="delete"
+            size={23}
+            color={lightColor}
+          />
+        )}
       </View>
       <View
         style={
@@ -96,6 +122,10 @@ TimetableLesson.defaultProps = {
   format: "",
   startTime: "",
   endTime: "",
+  edit: false,
+  remove: false,
+  onPressEdit: () => {},
+  onPressRemove: () => {},
   style: {},
 };
 
@@ -107,6 +137,10 @@ TimetableLesson.propTypes = {
   format: PropTypes.string,
   startTime: PropTypes.string,
   endTime: PropTypes.string,
+  edit: PropTypes.bool,
+  remove: PropTypes.bool,
+  onPressEdit: PropTypes.func,
+  onPressRemove: PropTypes.func,
   style: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.arrayOf(PropTypes.object),

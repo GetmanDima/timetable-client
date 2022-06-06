@@ -1,8 +1,11 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {View} from "react-native";
+import MaterialIcon from "@expo/vector-icons/MaterialIcons";
+import EditTimetableNavigation from "./EditTimetableNavigation";
 import Timetables from "../screens/Timetables";
 import CreateTimetable from "../screens/CreateTimetable";
 import Timetable from "../screens/Timetable";
-import {lightDarkColor, whiteColor} from "../styles/constants";
+import {lightColor, lightDarkColor, whiteColor} from "../styles/constants";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,8 +28,33 @@ const TimetablesNavigation = () => {
     {
       name: "Timetable",
       component: Timetable,
+      options: ({navigation, route}) => ({
+        headerRight: () => {
+          return (
+            <View>
+              <MaterialIcon.Button
+                onPress={() => {
+                  navigation.navigate("EditTimetableNavigation", {
+                    screen: "EditTimetable",
+                    params: route.params,
+                  });
+                }}
+                iconStyle={{marginRight: 0}}
+                backgroundColor={null}
+                name="edit"
+                size={25}
+                color={lightColor}
+              />
+            </View>
+          );
+        },
+      }),
+    },
+    {
+      name: "EditTimetableNavigation",
+      component: EditTimetableNavigation,
       options: {
-        title: "Расписание",
+        headerShown: false,
       },
     },
   ];
