@@ -1,13 +1,6 @@
 import {useState, useEffect} from "react";
-import {
-  View,
-  Text,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  ScrollView,
-} from "react-native";
+import {View, Text, Keyboard} from "react-native";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {useForm, Controller} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {login} from "../../store/actions/auth";
@@ -59,125 +52,116 @@ const Auth = ({navigation}) => {
   };
 
   return (
-    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView>
-            <View style={[mainStyles.container, mainStyles.form]}>
-              {authLoading && <Loader />}
+    <View style={mainStyles.screen}>
+      {authLoading && <Loader />}
 
-              <Modal
-                header="Ошибка авторизации"
-                body={authErrors.join("\n")}
-                type="danger"
-                visible={errorModalVisible}
-                onPress={() => {
-                  setErrorModalVisible(false);
-                }}
-              />
+      <Modal
+        header="Ошибка авторизации"
+        body={authErrors.join("\n")}
+        type="danger"
+        visible={errorModalVisible}
+        onPress={() => {
+          setErrorModalVisible(false);
+        }}
+      />
+      <KeyboardAwareScrollView
+        contentContainerStyle={mainStyles.keyboardAwareContent}>
+        <View style={[mainStyles.container, mainStyles.form]}>
+          <Controller
+            control={control}
+            name={"email"}
+            rules={{
+              required: "Необходимо заполнить",
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+              pattern: {
+                value: EMAIL_REGEX,
+                message: "Не является email",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label={"Email"}
+                    autoFocus={true}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"email"}
-                rules={{
-                  required: "Необходимо заполнить",
-                  maxLength: {
-                    value: 100,
-                    message: "Максимальная длина 100",
-                  },
-                  pattern: {
-                    value: EMAIL_REGEX,
-                    message: "Не является email",
-                  },
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View>
-                      <FlatTextInput
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        invalid={invalid}
-                        label={"Email"}
-                        autoFocus={true}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"password"}
+            rules={{
+              required: "Необходимо заполнить",
+              minLength: {
+                value: 3,
+                message: "Минимальная длина 3",
+              },
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View style={mainStyles.mt3}>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label={"Password"}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"password"}
-                rules={{
-                  required: "Необходимо заполнить",
-                  minLength: {
-                    value: 3,
-                    message: "Минимальная длина 3",
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: "Максимальная длина 100",
-                  },
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={mainStyles.mt3}>
-                      <FlatTextInput
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        invalid={invalid}
-                        label={"Password"}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
-
-              <Button
-                text="Вход"
-                style={mainStyles.mt5}
-                onPress={handleSubmit(onSubmit)}
-                type="primary"
-              />
-              <View style={[styles.alternative, mainStyles.mt5]}>
-                <Text style={styles.alternativeText}>Не зарегистированы?</Text>
-                <Link
-                  to="/Registration"
-                  text="Зарегистрироваться"
-                  textStyle={styles.alternativeLink}
-                />
-              </View>
-              <View style={[styles.alternative, mainStyles.mt2]}>
-                <Text style={styles.alternativeText}>или перейти к</Text>
-                <Link
-                  to="/ChooseTimetable"
-                  text="Выбору расписания"
-                  textStyle={styles.alternativeLink}
-                />
-              </View>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          <Button
+            text="Вход"
+            style={mainStyles.mt5}
+            onPress={handleSubmit(onSubmit)}
+            type="primary"
+          />
+          <View style={[styles.alternative, mainStyles.mt5]}>
+            <Text style={styles.alternativeText}>Не зарегистированы?</Text>
+            <Link
+              to="/Registration"
+              text="Зарегистрироваться"
+              textStyle={styles.alternativeLink}
+            />
+          </View>
+          <View style={[styles.alternative, mainStyles.mt2]}>
+            <Text style={styles.alternativeText}>или перейти к</Text>
+            <Link
+              to="/ChooseTimetable"
+              text="Выбору расписания"
+              textStyle={styles.alternativeLink}
+            />
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

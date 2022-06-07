@@ -1,14 +1,7 @@
 import moment from "moment";
 import {useState, useEffect, useMemo} from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-} from "react-native";
+import {View, Text, Keyboard} from "react-native";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {useForm, Controller} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {getIdFromLocation} from "../../utils";
@@ -181,7 +174,7 @@ const CreateTimetableLesson = ({route, navigation}) => {
   }, [subjects]);
 
   return (
-    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
+    <View style={mainStyles.screen}>
       {loading && <Loader />}
       <Modal
         header={`${edit ? "Редактирование" : "Создание"} урока`}
@@ -192,337 +185,316 @@ const CreateTimetableLesson = ({route, navigation}) => {
           setErrorModalVisible(false);
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={200}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView>
-            <View style={[mainStyles.container, mainStyles.form]}>
-              <Controller
-                control={control}
-                name={"weekDay"}
-                rules={{
-                  required: "Необходимо выбрать",
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={[
-                          {label: "Понедельник", value: "monday"},
-                          {label: "Вторник", value: "tuesday"},
-                          {label: "Среда", value: "wednesday"},
-                          {label: "Четверг", value: "thursday"},
-                          {label: "Пятница", value: "friday"},
-                          {label: "Суббота", value: "saturday"},
-                          {label: "Воскресенье", value: "sunday"},
-                        ]}
-                        selectedValue={value}
-                        label="День недели"
-                        invalid={invalid}
-                        onValueChange={value => {
-                          onChange(value);
-                        }}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+      <KeyboardAwareScrollView
+        contentContainerStyle={mainStyles.keyboardAwareContent}>
+        <View style={[mainStyles.container, mainStyles.form]}>
+          <Controller
+            control={control}
+            name={"weekDay"}
+            rules={{
+              required: "Необходимо выбрать",
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View style={styles.control}>
+                  <FlatInputPicker
+                    items={[
+                      {label: "Понедельник", value: "monday"},
+                      {label: "Вторник", value: "tuesday"},
+                      {label: "Среда", value: "wednesday"},
+                      {label: "Четверг", value: "thursday"},
+                      {label: "Пятница", value: "friday"},
+                      {label: "Суббота", value: "saturday"},
+                      {label: "Воскресенье", value: "sunday"},
+                    ]}
+                    selectedValue={value}
+                    label="День недели"
+                    invalid={invalid}
+                    onValueChange={value => {
+                      onChange(value);
+                    }}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"weekType"}
-                rules={{
-                  required: "Необходимо выбрать",
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={weekTypeItems}
-                        selectedValue={value}
-                        label="Тип недели"
-                        invalid={invalid}
-                        onValueChange={value => {
-                          onChange(value);
-                        }}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"weekType"}
+            rules={{
+              required: "Необходимо выбрать",
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View style={styles.control}>
+                  <FlatInputPicker
+                    items={weekTypeItems}
+                    selectedValue={value}
+                    label="Тип недели"
+                    invalid={invalid}
+                    onValueChange={value => {
+                      onChange(value);
+                    }}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"classTime"}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={classTimeItems}
-                        selectedValue={value}
-                        label="Номер урока"
-                        invalid={invalid}
-                        onValueChange={value => {
-                          onChange(value);
-                        }}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"classTime"}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View style={styles.control}>
+                  <FlatInputPicker
+                    items={classTimeItems}
+                    selectedValue={value}
+                    label="Номер урока"
+                    invalid={invalid}
+                    onValueChange={value => {
+                      onChange(value);
+                    }}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"teacher"}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={teacherItems}
-                        selectedValue={value}
-                        label="Учитель"
-                        invalid={invalid}
-                        onValueChange={value => {
-                          onChange(value);
-                        }}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"teacher"}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View style={styles.control}>
+                  <FlatInputPicker
+                    items={teacherItems}
+                    selectedValue={value}
+                    label="Учитель"
+                    invalid={invalid}
+                    onValueChange={value => {
+                      onChange(value);
+                    }}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"subject"}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={subjectItems}
-                        selectedValue={value}
-                        label="Предмет"
-                        invalid={invalid}
-                        onValueChange={value => {
-                          onChange(value);
-                        }}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"subject"}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View style={styles.control}>
+                  <FlatInputPicker
+                    items={subjectItems}
+                    selectedValue={value}
+                    label="Предмет"
+                    invalid={invalid}
+                    onValueChange={value => {
+                      onChange(value);
+                    }}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"classType"}
-                rules={{
-                  minLength: {
-                    value: 1,
-                    message: "Минимальная длина 1",
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: "Максимальная длина 100",
-                  },
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View>
-                      <FlatTextInput
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        invalid={invalid}
-                        label="Тип занятия"
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"classType"}
+            rules={{
+              minLength: {
+                value: 1,
+                message: "Минимальная длина 1",
+              },
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Тип занятия"
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"format"}
-                rules={{
-                  minLength: {
-                    value: 1,
-                    message: "Минимальная длина 1",
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: "Максимальная длина 100",
-                  },
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View>
-                      <FlatTextInput
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        invalid={invalid}
-                        label="Формат проведения"
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"format"}
+            rules={{
+              minLength: {
+                value: 1,
+                message: "Минимальная длина 1",
+              },
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Формат проведения"
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"room"}
-                rules={{
-                  minLength: {
-                    value: 1,
-                    message: "Минимальная длина 1",
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: "Максимальная длина 100",
-                  },
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View>
-                      <FlatTextInput
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        invalid={invalid}
-                        label="Аудитория"
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"room"}
+            rules={{
+              minLength: {
+                value: 1,
+                message: "Минимальная длина 1",
+              },
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Аудитория"
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"activeFromDate"}
-                render={({field: {value, onBlur, onChange}}) => {
-                  return (
-                    <View>
-                      <FlatDateTimePicker
-                        value={value}
-                        label="Начинается"
-                        mode="date"
-                        display="calendar"
-                        onValueChange={onChange}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"activeFromDate"}
+            render={({field: {value, onBlur, onChange}}) => {
+              return (
+                <View>
+                  <FlatDateTimePicker
+                    value={value}
+                    label="Начинается"
+                    mode="date"
+                    display="calendar"
+                    onValueChange={onChange}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                </View>
+              );
+            }}
+          />
 
-              <Controller
-                control={control}
-                name={"activeToDate"}
-                render={({field: {value, onBlur, onChange}}) => {
-                  return (
-                    <View>
-                      <FlatDateTimePicker
-                        value={value}
-                        label="Заканчивается"
-                        mode="date"
-                        display="calendar"
-                        onValueChange={onChange}
-                        onBlur={onBlur}
-                        style={mainStyles.mt3}
-                      />
-                    </View>
-                  );
-                }}
-              />
+          <Controller
+            control={control}
+            name={"activeToDate"}
+            render={({field: {value, onBlur, onChange}}) => {
+              return (
+                <View>
+                  <FlatDateTimePicker
+                    value={value}
+                    label="Заканчивается"
+                    mode="date"
+                    display="calendar"
+                    onValueChange={onChange}
+                    onBlur={onBlur}
+                    style={mainStyles.mt3}
+                  />
+                </View>
+              );
+            }}
+          />
 
-              <Button
-                text={edit ? "Изменить" : "Создать"}
-                style={styles.submit}
-                onPress={handleSubmit(onSubmit)}
-                type={"primary"}
-              />
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          <Button
+            text={edit ? "Изменить" : "Создать"}
+            style={styles.submit}
+            onPress={handleSubmit(onSubmit)}
+            type={"primary"}
+          />
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

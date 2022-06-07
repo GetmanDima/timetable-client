@@ -1,13 +1,5 @@
 import {useState, useEffect} from "react";
-import {
-  View,
-  Text,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  ScrollView,
-} from "react-native";
+import {View, Text, Keyboard, ScrollView} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useSelector} from "react-redux";
 import {useForm, Controller} from "react-hook-form";
@@ -189,145 +181,136 @@ const ChooseTimetable = ({navigation}) => {
 
   return (
     <View style={[mainStyles.screen, mainStyles.screenCenter]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView>
-            <View style={[mainStyles.container, mainStyles.form]}>
-              {lastTimetable && (
-                <TimetableItem
-                  style={styles.lastOpened}
-                  timetable={lastTimetable}
-                  onPress={() => {
-                    navigation.navigate("Timetable", {
-                      timetable: lastTimetable,
-                    });
-                  }}
+      <View>
+        <ScrollView>
+          <View style={[mainStyles.container, mainStyles.form]}>
+            {lastTimetable && (
+              <TimetableItem
+                style={styles.lastOpened}
+                timetable={lastTimetable}
+                onPress={() => {
+                  navigation.navigate("Timetable", {
+                    timetable: lastTimetable,
+                  });
+                }}
+              />
+            )}
+            <Controller
+              control={control}
+              name={"university"}
+              rules={{
+                required: "Необходимо выбрать",
+              }}
+              render={({
+                field: {value, onBlur, onChange},
+                fieldState: {error, invalid},
+              }) => {
+                return (
+                  <View style={styles.control}>
+                    <FlatInputPicker
+                      items={universities}
+                      selectedValue={value}
+                      label="University"
+                      invalid={invalid}
+                      loading={universityLoading}
+                      onValueChange={onChange}
+                      onBlur={onBlur}
+                      onEndReached={onUniversityEndReached}
+                    />
+                    {invalid && (
+                      <Text style={mainStyles.inputError}>{error.message}</Text>
+                    )}
+                  </View>
+                );
+              }}
+            />
+
+            <Controller
+              control={control}
+              name={"group"}
+              rules={{
+                required: "Необходимо выбрать",
+              }}
+              render={({
+                field: {value, onBlur, onChange},
+                fieldState: {error, invalid},
+              }) => {
+                return (
+                  <View style={styles.control}>
+                    <FlatInputPicker
+                      items={groups}
+                      selectedValue={value}
+                      label="Group"
+                      invalid={invalid}
+                      disabled={!university}
+                      loading={groupLoading}
+                      onValueChange={onChange}
+                      onBlur={onBlur}
+                      onEndReached={onGroupEndReached}
+                    />
+                    {university && invalid && (
+                      <Text style={mainStyles.inputError}>{error.message}</Text>
+                    )}
+                  </View>
+                );
+              }}
+            />
+
+            <Controller
+              control={control}
+              name={"timetable"}
+              rules={{
+                required: "Необходимо выбрать",
+              }}
+              render={({
+                field: {value, onBlur, onChange},
+                fieldState: {error, invalid},
+              }) => {
+                return (
+                  <View style={styles.control}>
+                    <FlatInputPicker
+                      items={timetables}
+                      selectedValue={value}
+                      label="Timetable"
+                      invalid={invalid}
+                      disabled={!group}
+                      loading={timetableLoading}
+                      onValueChange={onChange}
+                      onBlur={onBlur}
+                      onEndReached={onTimetableEndReached}
+                    />
+                    {group && invalid && (
+                      <Text style={mainStyles.inputError}>{error.message}</Text>
+                    )}
+                  </View>
+                );
+              }}
+            />
+
+            <Button
+              text={"Получить"}
+              style={mainStyles.mt5}
+              onPress={handleSubmit(onSubmit)}
+              type={"primary"}
+            />
+            {!authStatus && (
+              <View style={styles.alternative}>
+                <Link
+                  to="/Auth"
+                  text="Вход"
+                  style={mainStyles.mr3}
+                  textStyle={styles.alternativeLink}
                 />
-              )}
-              <Controller
-                control={control}
-                name={"university"}
-                rules={{
-                  required: "Необходимо выбрать",
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={universities}
-                        selectedValue={value}
-                        label="University"
-                        invalid={invalid}
-                        loading={universityLoading}
-                        onValueChange={onChange}
-                        onBlur={onBlur}
-                        onEndReached={onUniversityEndReached}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
-
-              <Controller
-                control={control}
-                name={"group"}
-                rules={{
-                  required: "Необходимо выбрать",
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={groups}
-                        selectedValue={value}
-                        label="Group"
-                        invalid={invalid}
-                        disabled={!university}
-                        loading={groupLoading}
-                        onValueChange={onChange}
-                        onBlur={onBlur}
-                        onEndReached={onGroupEndReached}
-                      />
-                      {university && invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
-
-              <Controller
-                control={control}
-                name={"timetable"}
-                rules={{
-                  required: "Необходимо выбрать",
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View style={styles.control}>
-                      <FlatInputPicker
-                        items={timetables}
-                        selectedValue={value}
-                        label="Timetable"
-                        invalid={invalid}
-                        disabled={!group}
-                        loading={timetableLoading}
-                        onValueChange={onChange}
-                        onBlur={onBlur}
-                        onEndReached={onTimetableEndReached}
-                      />
-                      {group && invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
-
-              <Button
-                text={"Получить"}
-                style={mainStyles.mt5}
-                onPress={handleSubmit(onSubmit)}
-                type={"primary"}
-              />
-              {!authStatus && (
-                <View style={styles.alternative}>
-                  <Link
-                    to="/Auth"
-                    text="Вход"
-                    style={mainStyles.mr3}
-                    textStyle={styles.alternativeLink}
-                  />
-                  <Link
-                    to="/Registration"
-                    text="Регистрация"
-                    textStyle={styles.alternativeLink}
-                  />
-                </View>
-              )}
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+                <Link
+                  to="/Registration"
+                  text="Регистрация"
+                  textStyle={styles.alternativeLink}
+                />
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 };

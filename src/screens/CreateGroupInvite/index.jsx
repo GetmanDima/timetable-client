@@ -1,13 +1,6 @@
 import {useState, useEffect} from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-} from "react-native";
+import {View, Text, Keyboard} from "react-native";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {useForm, Controller} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {getIdFromLocation} from "../../utils";
@@ -98,7 +91,7 @@ const CreateGroupInvite = ({route, navigation}) => {
   };
 
   return (
-    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
+    <View style={mainStyles.screen}>
       {loading && <Loader />}
       <Modal
         header={`${edit ? "Редактирование" : "Создание"} типа недели`}
@@ -109,59 +102,53 @@ const CreateGroupInvite = ({route, navigation}) => {
           setErrorModalVisible(false);
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView>
-            <View style={[mainStyles.container, mainStyles.form]}>
-              <Controller
-                control={control}
-                name={"code"}
-                rules={{
-                  required: "Необходимо заполнить",
-                  minLength: {
-                    value: 1,
-                    message: "Минимальная длина 1",
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: "Максимальная длина 100",
-                  },
-                }}
-                render={({
-                  field: {value, onBlur, onChange},
-                  fieldState: {error, invalid},
-                }) => {
-                  return (
-                    <View>
-                      <FlatTextInput
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        invalid={invalid}
-                        label="Код приглашения"
-                        style={mainStyles.mt3}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
-                  );
-                }}
-              />
+      <KeyboardAwareScrollView
+        contentContainerStyle={mainStyles.keyboardAwareContent}>
+        <View style={[mainStyles.container, mainStyles.form]}>
+          <Controller
+            control={control}
+            name={"code"}
+            rules={{
+              required: "Необходимо заполнить",
+              minLength: {
+                value: 1,
+                message: "Минимальная длина 1",
+              },
+              maxLength: {
+                value: 100,
+                message: "Максимальная длина 100",
+              },
+            }}
+            render={({
+              field: {value, onBlur, onChange},
+              fieldState: {error, invalid},
+            }) => {
+              return (
+                <View>
+                  <FlatTextInput
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    invalid={invalid}
+                    label="Код приглашения"
+                    style={mainStyles.mt3}
+                  />
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
+                </View>
+              );
+            }}
+          />
 
-              <Button
-                text={edit ? "Изменить" : "Создать"}
-                style={styles.submit}
-                onPress={handleSubmit(onSubmit)}
-                type={"primary"}
-              />
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          <Button
+            text={edit ? "Изменить" : "Создать"}
+            style={styles.submit}
+            onPress={handleSubmit(onSubmit)}
+            type={"primary"}
+          />
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

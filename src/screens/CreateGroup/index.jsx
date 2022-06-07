@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import {View, Keyboard, Text, ScrollView} from "react-native";
+import {View, Keyboard, Text} from "react-native";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {useForm, Controller} from "react-hook-form";
 import {
   Button,
@@ -174,7 +175,7 @@ const CreateGroup = ({navigation}) => {
   }, [authStatus]);
 
   return (
-    <View style={[mainStyles.screen, mainStyles.screenCenter]}>
+    <View style={mainStyles.screen}>
       <Modal
         header="Создание группы"
         body="Группа успешно создана. Нажимте ОК и заново авторизуйтесь."
@@ -192,7 +193,8 @@ const CreateGroup = ({navigation}) => {
           setErrorModalVisible(false);
         }}
       />
-      <ScrollView>
+      <KeyboardAwareScrollView
+        contentContainerStyle={mainStyles.keyboardAwareContent}>
         <View style={[mainStyles.container, mainStyles.form]}>
           {loading && <Loader />}
           <Controller
@@ -375,7 +377,7 @@ const CreateGroup = ({navigation}) => {
             type={"primary"}
           />
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </View>
   );
 };
