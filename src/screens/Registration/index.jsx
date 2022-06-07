@@ -53,14 +53,7 @@ const Registration = ({navigation}) => {
     Keyboard.dismiss();
     setLoading(true);
 
-    requestRegister(
-      data.type,
-      data.email,
-      data.password,
-      data.firstName,
-      data.lastName,
-      data.code,
-    )
+    requestRegister(data)
       .then(() => {
         setStatus(true);
         setLoading(false);
@@ -107,7 +100,7 @@ const Registration = ({navigation}) => {
             <View style={[mainStyles.container, mainStyles.form]}>
               <Controller
                 control={control}
-                name={"university"}
+                name={"type"}
                 rules={{
                   required: "Необходимо выбрать",
                 }}
@@ -290,7 +283,48 @@ const Registration = ({navigation}) => {
 
               <Controller
                 control={control}
-                name={"code"}
+                name={"groupIdentifier"}
+                rules={{
+                  validate: v => {
+                    if (v === "") {
+                      return disabledCode ? true : "Необходимо заполнить";
+                    }
+
+                    return true;
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Максимальная длина 100",
+                  },
+                }}
+                render={({
+                  field: {value, onBlur, onChange},
+                  fieldState: {error, invalid},
+                }) => {
+                  return (
+                    <View>
+                      <FlatTextInput
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        invalid={invalid}
+                        label="Идентификатор группы"
+                        editable={!disabledCode}
+                        style={mainStyles.mt3}
+                      />
+                      {invalid && (
+                        <Text style={mainStyles.inputError}>
+                          {error.message}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                }}
+              />
+
+              <Controller
+                control={control}
+                name={"groupInviteCode"}
                 rules={{
                   validate: v => {
                     if (v === "") {

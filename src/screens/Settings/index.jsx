@@ -1,16 +1,32 @@
 import {View} from "react-native";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../store/actions/auth";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
 import {Button} from "../../components";
 
-const Settings = () => {
+const Settings = ({navigation}) => {
   const dispatch = useDispatch();
+
+  const {user} = useSelector(state => {
+    return {
+      user: state.auth.user,
+    };
+  });
 
   return (
     <View style={mainStyles.screen}>
       <View style={mainStyles.container}>
+        {user && user.type === "leader" && (
+          <Button
+            onPress={() => {
+              navigation.navigate("GroupInvites");
+            }}
+            type="dark"
+            style={styles.item}
+            text="Приглашения в группу"
+          />
+        )}
         <Button
           onPress={() => {
             dispatch(logout());

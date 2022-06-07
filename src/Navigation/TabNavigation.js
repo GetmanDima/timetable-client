@@ -4,7 +4,7 @@ import MaterialIcon from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import ChooseTimetableNavigation from "./ChooseTimetableNavigation";
 import TimetablesNavigation from "./TimetablesNavigation";
-import Settings from "../screens/Settings";
+import SettingsNavigation from "./SettingsNavigation";
 import {
   darkColor,
   lightColor,
@@ -54,10 +54,10 @@ const TabNavigation = () => {
       },
     },
     {
-      name: "Settings",
-      component: Settings,
+      name: "SettingsNavigation",
+      component: SettingsNavigation,
       options: {
-        title: "Настройки",
+        headerShown: false,
         tabBarIcon: ({focused}) => {
           return (
             <View>
