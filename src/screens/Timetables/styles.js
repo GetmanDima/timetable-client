@@ -1,13 +1,9 @@
 import {StyleSheet} from "react-native";
-import {lightDarkColor, textFontSize, whiteColor} from "../../styles/constants";
+import {lightDarkColor, whiteColor} from "../../styles/constants";
 
 export default StyleSheet.create({
   container: {
     alignItems: "center",
-  },
-  text: {
-    fontSize: textFontSize,
-    color: whiteColor,
   },
   timetable: {
     marginBottom: 10,
@@ -31,5 +27,17 @@ export default StyleSheet.create({
   },
   createButtonText: {
     fontSize: 30,
+  },
+  timetableHeader: {
+    marginTop: 15,
+    marginBottom: 20,
+    textAlign: "center",
+    fontSize: 20,
+    color: whiteColor,
+  },
+  noTimetablesText: {
+    marginTop: 15,
+    fontSize: 18,
+    color: whiteColor,
   },
 });

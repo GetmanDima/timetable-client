@@ -1,9 +1,10 @@
 import {getAuthHost} from "./index";
 
-export const requestCreateTimetable = (accessToken, {name}) => {
+export const requestCreateTimetable = (accessToken, {name, target}) => {
   const $host = getAuthHost(accessToken);
   return $host.post("/v1/timetables", {
     name,
+    target,
   });
 };
 

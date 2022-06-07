@@ -31,4 +31,8 @@ export default StyleSheet.create({
     color: dangerColor,
     marginTop: 10,
   },
+  keyboardAwareContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
 });

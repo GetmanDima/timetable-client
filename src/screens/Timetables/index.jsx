@@ -1,5 +1,5 @@
-import {useState, useEffect} from "react";
-import {ScrollView, View} from "react-native";
+import {useState, useEffect, useMemo} from "react";
+import {ScrollView, View, Text} from "react-native";
 import {useSelector} from "react-redux";
 import {fetchTimetables} from "../../api/timetable";
 import {Button, Loader, Modal, TimetableItem} from "../../components";
@@ -38,6 +38,36 @@ const Timetables = ({navigation}) => {
     }
   }, [errors]);
 
+  const personalTimetableElements = useMemo(() => {
+    return timetables
+      .filter(timetable => !timetable.groupId)
+      .map(timetable => (
+        <View key={timetable.id}>
+          <TimetableItem
+            timetable={timetable}
+            onPress={() =>
+              navigation.navigate("Timetable", {timetable: timetable})
+            }
+          />
+        </View>
+      ));
+  }, [timetables]);
+
+  const groupTimetableElements = useMemo(() => {
+    return timetables
+      .filter(timetable => timetable.groupId)
+      .map(timetable => (
+        <View key={timetable.id}>
+          <TimetableItem
+            timetable={timetable}
+            onPress={() =>
+              navigation.navigate("Timetable", {timetable: timetable})
+            }
+          />
+        </View>
+      ));
+  }, [timetables]);
+
   return (
     <View style={mainStyles.screen}>
       {loading && <Loader />}
@@ -61,16 +91,26 @@ const Timetables = ({navigation}) => {
       />
       <ScrollView>
         <View style={[mainStyles.container, styles.container]}>
-          {timetables.map(timetable => (
-            <View key={timetable.id}>
-              <TimetableItem
-                timetable={timetable}
-                onPress={() =>
-                  navigation.navigate("Timetable", {timetable: timetable})
-                }
-              />
+          {timetables.length > 0 ? (
+            <View>
+              {personalTimetableElements.length > 0 && (
+                <>
+                  <Text style={styles.timetableHeader}>Мои</Text>
+                  {personalTimetableElements}
+                </>
+              )}
+              {groupTimetableElements.length > 0 && (
+                <>
+                  <Text style={styles.timetableHeader}>Группа</Text>
+                  {groupTimetableElements}
+                </>
+              )}
             </View>
-          ))}
+          ) : (
+            <Text style={styles.noTimetablesText}>
+              Нет расписания. Добавьте новое!
+            </Text>
+          )}
         </View>
       </ScrollView>
     </View>
