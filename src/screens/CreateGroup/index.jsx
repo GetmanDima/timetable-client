@@ -8,16 +8,17 @@ import {
   FlatTextInput,
   FlatInputPicker,
   Modal,
-  NewItemModal,
 } from "../../components";
-import {requestCreateUniversity, fetchUniversities} from "../../api/university";
 import {useDispatch, useSelector} from "react-redux";
+import {fetchUniversities} from "../../api/university";
 import {requestCreateGroup} from "../../api/group";
 import {logout} from "../../store/actions/auth";
 import mainStyles from "../../styles/styles";
 import styles from "./styles";
 
-const CreateGroup = ({navigation}) => {
+const CreateGroup = ({route, navigation}) => {
+  const {university: paramUniversity} = route.params ?? {};
+
   const dispatch = useDispatch();
 
   const {authStatus, accessToken} = useSelector(state => {
@@ -39,8 +40,6 @@ const CreateGroup = ({navigation}) => {
   const [universityTotalCount, setUniversityTotalCount] = useState(1);
   const [universityOffset, setUniversityOffset] = useState(0);
   const [universityLoading, setUniversityLoading] = useState(false);
-  const [newUniversityModalVisible, setNewUniversityModalVisible] =
-    useState(false);
 
   const prepareResultForPicker = fetchResult => {
     return fetchResult.then(res => {
@@ -73,6 +72,28 @@ const CreateGroup = ({navigation}) => {
     }
   };
 
+  const resetUniversity = () => {
+    setUniversities([]);
+    setUniversityTotalCount(1);
+    setUniversityOffset(0);
+    setUniversityLoading(false);
+    setValue("university", undefined);
+  };
+
+  useEffect(() => {
+    if (paramUniversity) {
+      resetUniversity();
+      setUniversities([
+        {
+          label: paramUniversity.name,
+          value: paramUniversity,
+          visible: false,
+        },
+      ]);
+      setValue("university", paramUniversity);
+    }
+  }, [paramUniversity]);
+
   useEffect(() => {
     if (errors.length > 0) {
       setErrorModalVisible(true);
@@ -85,19 +106,20 @@ const CreateGroup = ({navigation}) => {
     }
   }, [status]);
 
+  useEffect(() => {
+    if (!authStatus) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: "Auth"}],
+      });
+    }
+  }, [authStatus]);
+
   const {control, handleSubmit, setValue, watch} = useForm({
     mode: "onTouched",
   });
 
   const university = watch("university");
-
-  const resetUniversity = () => {
-    setUniversities([]);
-    setUniversityTotalCount(1);
-    setUniversityOffset(0);
-    setUniversityLoading(false);
-    setValue("university", undefined);
-  };
 
   const onSubmit = data => {
     setLoading(true);
@@ -118,61 +140,6 @@ const CreateGroup = ({navigation}) => {
 
     Keyboard.dismiss();
   };
-
-  const newUniversityModalInputs = [
-    {
-      name: "name",
-      label: "Аббревиатура",
-      rules: {
-        required: "Необходимо заполнить",
-        minLength: {
-          value: 3,
-          message: "Минимальная длина 3",
-        },
-        maxLength: {
-          value: 100,
-          message: "Максимальная длина 100",
-        },
-      },
-    },
-    {
-      name: "fullName",
-      label: "Полное название",
-      rules: {
-        minLength: {
-          value: 3,
-          message: "Минимальная длина 3",
-        },
-        maxLength: {
-          value: 100,
-          message: "Максимальная длина 100",
-        },
-      },
-    },
-    {
-      name: "address",
-      label: "Адрес",
-      rules: {
-        minLength: {
-          value: 3,
-          message: "Минимальная длина 3",
-        },
-        maxLength: {
-          value: 100,
-          message: "Максимальная длина 100",
-        },
-      },
-    },
-  ];
-
-  useEffect(() => {
-    if (!authStatus) {
-      navigation.reset({
-        index: 0,
-        routes: [{name: "Auth"}],
-      });
-    }
-  }, [authStatus]);
 
   return (
     <View style={mainStyles.screen}>
@@ -209,58 +176,34 @@ const CreateGroup = ({navigation}) => {
             }) => {
               return (
                 <View>
-                  <NewItemModal
-                    visible={newUniversityModalVisible}
-                    header={"Добавить университет"}
-                    inputs={newUniversityModalInputs}
-                    setVisible={setNewUniversityModalVisible}
-                    setValue={university => {
-                      resetUniversity();
-                      setUniversities([
-                        {
-                          label: university.name,
-                          value: university,
-                          visible: false,
-                        },
-                      ]);
-                      onChange(university);
-                      onBlur();
-                    }}
-                    requestCreateItem={(...params) => {
-                      return requestCreateUniversity(accessToken, ...params);
-                    }}
-                  />
-                  <View>
-                    <View style={styles.pickerWithButton}>
-                      <FlatInputPicker
-                        items={universities}
-                        selectedValue={value}
-                        label="Университет"
-                        invalid={invalid}
-                        loading={universityLoading}
-                        onValueChange={onChange}
-                        onBlur={onBlur}
-                        onEndReached={onUniversityEndReached}
-                        style={styles.pickerWithButtonInput}
-                      />
-                      <Button
-                        text="+"
-                        onPress={() => {
-                          setNewUniversityModalVisible(true);
-                        }}
-                        style={styles.pickerButton}
-                      />
-                      {invalid && (
-                        <Text style={mainStyles.inputError}>
-                          {error.message}
-                        </Text>
-                      )}
-                    </View>
+                  <View style={styles.pickerWithButton}>
+                    <FlatInputPicker
+                      items={universities}
+                      selectedValue={value}
+                      label="Университет"
+                      invalid={invalid}
+                      loading={universityLoading}
+                      onValueChange={onChange}
+                      onBlur={onBlur}
+                      onEndReached={onUniversityEndReached}
+                      style={styles.pickerWithButtonInput}
+                    />
+                    <Button
+                      text="+"
+                      onPress={() => {
+                        navigation.navigate("CreateUniversity");
+                      }}
+                      style={styles.pickerButton}
+                    />
                   </View>
+                  {invalid && (
+                    <Text style={mainStyles.inputError}>{error.message}</Text>
+                  )}
                 </View>
               );
             }}
           />
+
           <Controller
             control={control}
             name={"groupName"}

@@ -10,6 +10,7 @@ import Registration from "../screens/Registration";
 import CreateGroup from "../screens/CreateGroup";
 import Timetable from "../screens/Timetable";
 import ChooseTimetable from "../screens/ChooseTimetable";
+import CreateUniversity from "../screens/CreateUniversity";
 import {lightColor, lightDarkColor, whiteColor} from "../styles/constants";
 
 const Stack = createNativeStackNavigator();
@@ -74,6 +75,13 @@ const Navigation = () => {
             </View>
           );
         },
+      },
+    },
+    {
+      name: "CreateUniversity",
+      component: CreateUniversity,
+      options: {
+        title: "Создать университет",
       },
     },
     {
