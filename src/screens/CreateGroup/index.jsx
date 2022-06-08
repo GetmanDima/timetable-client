@@ -41,6 +41,12 @@ const CreateGroup = ({route, navigation}) => {
   const [universityOffset, setUniversityOffset] = useState(0);
   const [universityLoading, setUniversityLoading] = useState(false);
 
+  const {control, handleSubmit, setValue, clearErrors, watch} = useForm({
+    mode: "onTouched",
+  });
+
+  const university = watch("university");
+
   const prepareResultForPicker = fetchResult => {
     return fetchResult.then(res => {
       return {
@@ -77,6 +83,7 @@ const CreateGroup = ({route, navigation}) => {
     setUniversityTotalCount(1);
     setUniversityOffset(0);
     setUniversityLoading(false);
+    clearErrors("university");
     setValue("university", undefined);
   };
 
@@ -114,12 +121,6 @@ const CreateGroup = ({route, navigation}) => {
       });
     }
   }, [authStatus]);
-
-  const {control, handleSubmit, setValue, watch} = useForm({
-    mode: "onTouched",
-  });
-
-  const university = watch("university");
 
   const onSubmit = data => {
     setLoading(true);
