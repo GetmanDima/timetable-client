@@ -87,7 +87,7 @@ const GroupInvites = ({navigation}) => {
           return (
             <View key={invite.id}>
               <EditListItem
-                content={<Text>{invite.code}</Text>}
+                content={<Text style={styles.listItemText}>{invite.code}</Text>}
                 onPressEdit={() => {
                   navigation.navigate("CreateGroupInvite", {
                     invite,

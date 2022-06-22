@@ -60,4 +60,8 @@ export default StyleSheet.create({
     fontSize: 20,
     color: lightPrimaryColor,
   },
+  listItemText: {
+    fontSize: textFontSize,
+    color: whiteColor,
+  },
 });
