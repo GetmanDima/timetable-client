@@ -7,6 +7,7 @@ import {
   RESET_TIMETABLE_LESSONS_ERRORS,
   ADD_TIMETABLE_LESSON,
   DELETE_TIMETABLE_LESSON,
+  SET_WEEK_DAYS_WITH_LESSONS,
 } from "../actionTypes/timetableLesson";
 
 const deleteLesson = (weekDaysWithLessons, timetableId, lesson) => {
@@ -96,6 +97,14 @@ export default (state = initialState, action) => {
               payload.lesson,
             ],
           },
+        },
+      };
+    case SET_WEEK_DAYS_WITH_LESSONS:
+      return {
+        ...state,
+        weekDaysWithLessons: {
+          ...state.weekDaysWithLessons,
+          [payload.timetableId]: payload.weekDaysWithLessons,
         },
       };
     default:

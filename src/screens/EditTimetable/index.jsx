@@ -105,7 +105,7 @@ const EditTimetable = ({route, navigation}) => {
 
           return {
             ...res,
-            [lesson.weekTypeId]: [...weekTypeLessons, lesson],
+            [lesson.weekTypeId ?? 0]: [...weekTypeLessons, lesson],
           };
         },
         {},
@@ -191,18 +191,22 @@ const EditTimetable = ({route, navigation}) => {
           });
 
         return (
-          weekTypes[weekTypeId] && (
-            <View key={weekTypeId} style={styles.weekType}>
-              <Text style={styles.weekTypeText}>
-                {capitalizeFirstLetter(weekTypes[weekTypeId].name)}
-              </Text>
-              {lessonItems.length > 0 ? (
-                lessonItems
-              ) : (
-                <View>
-                  <Text style={styles.noLessons}>Нет уроков</Text>
-                </View>
+          <View key={weekTypeId} style={styles.weekType}>
+            <Text style={styles.weekTypeText}>
+              {capitalizeFirstLetter(
+                weekTypes[weekTypeId]
+                  ? weekTypes[weekTypeId].name
+                  : "Без типа недели",
               )}
+            </Text>
+            {lessonItems.length > 0 ? (
+              lessonItems
+            ) : (
+              <View>
+                <Text style={styles.noLessons}>Нет уроков</Text>
+              </View>
+            )}
+            {weekTypes[weekTypeId] && (
               <Button
                 text="Добавить"
                 onPress={() => {
@@ -213,8 +217,8 @@ const EditTimetable = ({route, navigation}) => {
                 }}
                 style={styles.addLessonButton}
               />
-            </View>
-          )
+            )}
+          </View>
         );
       });
   }, [weekTypesWithLessons, timetableLoading]);

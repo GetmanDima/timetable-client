@@ -15,6 +15,7 @@ import {
   finishLoadingTimetableLessons,
   getTimetableLessons,
   resetTimetableLessonsErrors,
+  setWeekDaysWithLessons,
 } from "../../store/actions/timetableLesson";
 import {Loader, Modal, TimetableLesson} from "../../components";
 import {whiteColor} from "../../styles/constants";
@@ -87,6 +88,78 @@ const Timetable = ({route, navigation}) => {
     }
   }, [timetableErrors]);
 
+  useEffect(() => {
+    if (timetableLoading || lessonLoading) {
+      return;
+    }
+
+    const newWeekDaysWithLessons = {};
+    let change = false;
+
+    for (const weekDay in weekDaysWithLessons) {
+      if (weekDaysWithLessons[weekDay]) {
+        newWeekDaysWithLessons[weekDay] = weekDaysWithLessons[weekDay].map(
+          lesson => {
+            if (!weekTypes[lesson.weekTypeId]) {
+              lesson.weekTypeId = null;
+              change = true;
+            }
+
+            if (!teachers[lesson.teacherId]) {
+              lesson.teacher = null;
+              change = true;
+            }
+
+            if (!subjects[lesson.subjectId]) {
+              lesson.subject = null;
+              change = true;
+            }
+
+            if (!classTimes[lesson.classTimeId]) {
+              lesson.classTimeId = null;
+              change = true;
+            }
+
+            return lesson;
+          },
+        );
+      }
+    }
+
+    if (change) {
+      dispatch(
+        setWeekDaysWithLessons(newWeekDaysWithLessons, paramTimetable.id),
+      );
+    }
+  }, [weekTypes, teachers, subjects, classTimes]);
+
+  const visibleWeekTypes = useMemo(() => {
+    if (!weekTypes) {
+      return {};
+    }
+
+    return Object.entries(weekTypes)
+      .filter(([, weekType]) => {
+        if (!weekType.activePeriods) {
+          return true;
+        }
+
+        for (const activePeriod of weekType.activePeriods) {
+          const fromDate = moment(activePeriod.from, "YYYY-MM-DD");
+          const toDate = moment(activePeriod.to, "YYYY-MM-DD").add(1, "days");
+
+          if (currentDate.isAfter(fromDate) && currentDate.isBefore(toDate)) {
+            return true;
+          }
+        }
+
+        return false;
+      })
+      .reduce((weekTypes, [weekTypeId, weekType]) => {
+        return {...weekTypes, [weekTypeId]: weekType};
+      }, {});
+  }, [weekTypes, currentDate]);
+
   const weekTypesWithLessons = useMemo(() => {
     if (!weekDaysWithLessons || !weekDaysWithLessons[currentWeekDay]) {
       return {};
@@ -109,17 +182,21 @@ const Timetable = ({route, navigation}) => {
           return true;
         }
       })
-      .reduce((weekTypes, lesson) => {
-        const weekTypeLessons = weekTypes[lesson.weekTypeId]
-          ? weekTypes[lesson.weekTypeId]
+      .reduce((weekTypesWithLessons, lesson) => {
+        if (!visibleWeekTypes[lesson.weekTypeId]) {
+          return weekTypesWithLessons;
+        }
+
+        const weekTypeLessons = weekTypesWithLessons[lesson.weekTypeId]
+          ? weekTypesWithLessons[lesson.weekTypeId]
           : [];
 
         return {
-          ...weekTypes,
+          ...weekTypesWithLessons,
           [lesson.weekTypeId]: [...weekTypeLessons, lesson],
         };
       }, {});
-  }, [weekDaysWithLessons, currentWeekDay]);
+  }, [weekDaysWithLessons, visibleWeekTypes, currentWeekDay]);
 
   const weekTypeItems = useMemo(() => {
     if (timetableLoading) {
@@ -164,14 +241,14 @@ const Timetable = ({route, navigation}) => {
             );
           });
 
-        return (
+        return weekTypes[weekTypeId] ? (
           <View key={weekTypeId}>
             <Text style={styles.weekTypeText}>
               {capitalizeFirstLetter(weekTypes[weekTypeId].name)}
             </Text>
             {lessonItems}
           </View>
-        );
+        ) : null;
       });
   }, [weekTypesWithLessons, timetableLoading]);
 
