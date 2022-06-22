@@ -52,7 +52,9 @@ const WeekTypes = ({route, navigation}) => {
           return (
             <View key={weekTypeId}>
               <EditListItem
-                content={<Text>{weekType.name}</Text>}
+                content={
+                  <Text style={styles.listItemText}>{weekType.name}</Text>
+                }
                 onPressEdit={() => {
                   navigation.navigate("CreateWeekType", {
                     timetable,

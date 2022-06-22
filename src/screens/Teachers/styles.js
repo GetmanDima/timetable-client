@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native";
-import {whiteColor} from "../../styles/constants";
+import {textFontSize, whiteColor} from "../../styles/constants";
 
 export default StyleSheet.create({
   container: {
@@ -24,6 +24,10 @@ export default StyleSheet.create({
   },
   noTeachersText: {
     fontSize: 18,
+    color: whiteColor,
+  },
+  listItemText: {
+    fontSize: textFontSize,
     color: whiteColor,
   },
 });

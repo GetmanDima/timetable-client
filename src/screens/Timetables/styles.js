@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native";
-import {lightDarkColor, whiteColor} from "../../styles/constants";
+import {lightDarkColor, textFontSize, whiteColor} from "../../styles/constants";
 
 export default StyleSheet.create({
   container: {
@@ -38,6 +38,10 @@ export default StyleSheet.create({
   noTimetablesText: {
     marginTop: 15,
     fontSize: 18,
+    color: whiteColor,
+  },
+  listItemText: {
+    fontSize: textFontSize,
     color: whiteColor,
   },
 });

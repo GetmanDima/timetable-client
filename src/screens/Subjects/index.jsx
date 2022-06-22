@@ -52,7 +52,9 @@ const Subjects = ({route, navigation}) => {
           return (
             <View key={subjectId}>
               <EditListItem
-                content={<Text>{subject.name}</Text>}
+                content={
+                  <Text style={styles.listItemText}>{subject.name}</Text>
+                }
                 onPressEdit={() => {
                   navigation.navigate("CreateSubject", {
                     timetable,

@@ -1,31 +1,36 @@
-import {View, Text} from "react-native";
+import {View} from "react-native";
 import PropTypes from "prop-types";
 import MaterialIcon from "@expo/vector-icons/MaterialIcons";
 import {lightColor} from "../../styles/constants";
+import ListItem from "../ListItem";
 import styles from "./styles";
 
 const EditListItem = ({content, onPressEdit, onPressDelete, style}) => {
   return (
     <View style={[styles.wrapper, style]}>
-      <View style={styles.content}>
-        <Text style={styles.text}>{content}</Text>
-        <MaterialIcon.Button
-          onPress={onPressEdit}
-          iconStyle={styles.icon}
-          backgroundColor={null}
-          name="edit"
-          size={25}
-          color={lightColor}
-        />
-        <MaterialIcon.Button
-          onPress={onPressDelete}
-          iconStyle={styles.icon}
-          backgroundColor={null}
-          name="delete"
-          size={25}
-          color={lightColor}
-        />
-      </View>
+      <ListItem
+        leftContent={<View style={styles.content}>{content}</View>}
+        rightContent={
+          <View style={styles.buttonWrapper}>
+            <MaterialIcon.Button
+              onPress={onPressEdit}
+              iconStyle={styles.icon}
+              backgroundColor={null}
+              name="edit"
+              size={25}
+              color={lightColor}
+            />
+            <MaterialIcon.Button
+              onPress={onPressDelete}
+              iconStyle={styles.icon}
+              backgroundColor={null}
+              name="delete"
+              size={25}
+              color={lightColor}
+            />
+          </View>
+        }
+      />
     </View>
   );
 };

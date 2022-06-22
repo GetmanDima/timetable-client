@@ -1,15 +1,23 @@
 import {useState, useEffect, useMemo} from "react";
 import {ScrollView, View, Text} from "react-native";
 import {useSelector} from "react-redux";
-import {fetchTimetables} from "../../api/timetable";
-import {Button, Loader, Modal, TimetableItem} from "../../components";
+import {fetchTimetables, requestDeleteTimetable} from "../../api/timetable";
+import {
+  Button,
+  EditListItem,
+  Loader,
+  Modal,
+  TimetableItem,
+} from "../../components";
 import mainStyles from "../../styles/styles";
+import {removeItemFromArray} from "../../utils";
 import styles from "./styles";
 
 const Timetables = ({navigation}) => {
-  const {accessToken} = useSelector(state => {
+  const {accessToken, timetablesMode} = useSelector(state => {
     return {
       accessToken: state.auth.accessToken,
+      timetablesMode: state.app.timetablesMode,
     };
   });
 
@@ -27,7 +35,7 @@ const Timetables = ({navigation}) => {
         setLoading(false);
       })
       .catch(() => {
-        setErrors([["Ошибка при получении расписания"]]);
+        setErrors(["Ошибка при получении расписания"]);
         setLoading(false);
       });
   }, []);
@@ -38,41 +46,62 @@ const Timetables = ({navigation}) => {
     }
   }, [errors]);
 
+  const getTimetableItem = timetable => {
+    return timetablesMode === "show" ? (
+      <View key={timetable.id}>
+        <TimetableItem
+          timetable={timetable}
+          onPress={() =>
+            navigation.navigate("Timetable", {timetable: timetable})
+          }
+        />
+      </View>
+    ) : (
+      <View key={timetable.id}>
+        <EditListItem
+          content={<Text style={styles.listItemText}>{timetable.name}</Text>}
+          onPressEdit={() => {
+            navigation.navigate("EditTimetableNavigation", {
+              screen: "EditTimetable",
+              params: {timetable},
+            });
+          }}
+          onPressDelete={() => {
+            requestDeleteTimetable(accessToken, timetable.id)
+              .then(() => {
+                setTimetables(
+                  removeItemFromArray(
+                    timetables,
+                    timetables.findIndex(t => t.id === timetable.id),
+                  ),
+                );
+              })
+              .catch(() => {
+                setErrors([["Ошибка при удалении расписания"]]);
+              });
+          }}
+        />
+      </View>
+    );
+  };
+
   const personalTimetableElements = useMemo(() => {
     return timetables
       .filter(timetable => !timetable.groupId)
-      .map(timetable => (
-        <View key={timetable.id}>
-          <TimetableItem
-            timetable={timetable}
-            onPress={() =>
-              navigation.navigate("Timetable", {timetable: timetable})
-            }
-          />
-        </View>
-      ));
-  }, [timetables]);
+      .map(timetable => getTimetableItem(timetable));
+  }, [timetables, timetablesMode]);
 
   const groupTimetableElements = useMemo(() => {
     return timetables
       .filter(timetable => timetable.groupId)
-      .map(timetable => (
-        <View key={timetable.id}>
-          <TimetableItem
-            timetable={timetable}
-            onPress={() =>
-              navigation.navigate("Timetable", {timetable: timetable})
-            }
-          />
-        </View>
-      ));
-  }, [timetables]);
+      .map(timetable => getTimetableItem(timetable));
+  }, [timetables, timetablesMode]);
 
   return (
     <View style={mainStyles.screen}>
       {loading && <Loader />}
       <Modal
-        header="Создание таблицы"
+        header="Таблица"
         body={errors.join("\n")}
         type="danger"
         visible={errorModalVisible}

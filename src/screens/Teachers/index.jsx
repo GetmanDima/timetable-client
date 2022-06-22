@@ -52,7 +52,9 @@ const Teachers = ({route, navigation}) => {
           return (
             <View key={teacherId}>
               <EditListItem
-                content={<Text>{teacher.name}</Text>}
+                content={
+                  <Text style={styles.listItemText}>{teacher.name}</Text>
+                }
                 onPressEdit={() => {
                   navigation.navigate("CreateTeacher", {
                     timetable,
