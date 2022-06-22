@@ -1,21 +1,58 @@
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {View} from "react-native";
+import {useDispatch, useSelector} from "react-redux";
 import MaterialIcon from "@expo/vector-icons/MaterialIcons";
 import EditTimetableNavigation from "./EditTimetableNavigation";
 import Timetables from "../screens/Timetables";
 import CreateTimetable from "../screens/CreateTimetable";
 import Timetable from "../screens/Timetable";
+import {
+  setEditTimetablesMode,
+  setShowTimetablesMode,
+} from "../store/actions/app";
 import {lightColor, lightDarkColor, whiteColor} from "../styles/constants";
 
 const Stack = createNativeStackNavigator();
 
 const TimetablesNavigation = () => {
+  const dispatch = useDispatch();
+  const timetablesMode = useSelector(state => state.app.timetablesMode);
+
   const routes = [
     {
       name: "Timetables",
       component: Timetables,
       options: {
         title: "Мое расписание",
+        headerRight: () => {
+          return timetablesMode === "show" ? (
+            <View>
+              <MaterialIcon.Button
+                onPress={() => {
+                  dispatch(setEditTimetablesMode());
+                }}
+                iconStyle={{marginRight: 0}}
+                backgroundColor={null}
+                name="edit"
+                size={25}
+                color={lightColor}
+              />
+            </View>
+          ) : (
+            <View>
+              <MaterialIcon.Button
+                onPress={() => {
+                  dispatch(setShowTimetablesMode());
+                }}
+                iconStyle={{marginRight: 0}}
+                backgroundColor={null}
+                name="menu"
+                size={25}
+                color={lightColor}
+              />
+            </View>
+          );
+        },
       },
     },
     {
