@@ -37,6 +37,11 @@ export const fetchTimetable = (
   });
 };
 
+export const requestDeleteTimetable = (accessToken, timetableId) => {
+  const $host = getAuthHost(accessToken);
+  return $host.delete(`/v1/timetables/${timetableId}`);
+};
+
 export const fetchTimetableLessons = (
   accessToken,
   timetableId,

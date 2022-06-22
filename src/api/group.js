@@ -28,6 +28,11 @@ export const fetchGroups = (
   return $host.get(`/v1/universities/${universityId}/groups`, {params});
 };
 
+export const fetchGroup = (accessToken, groupId) => {
+  const $host = getAuthHost(accessToken);
+  return $host.get(`/v1/groups/${groupId}`);
+};
+
 export const requestCreateGroupInvite = (accessToken, groupId, {code}) => {
   const $host = getAuthHost(accessToken);
   return $host.post(`/v1/groups/${groupId}/invites`, {
@@ -50,6 +55,11 @@ export const requestEditGroupInvite = (accessToken, {id, code}) => {
 export const requestDeleteGroupInvite = (accessToken, {id}) => {
   const $host = getAuthHost(accessToken);
   return $host.delete(`/v1/group-invites/${id}`);
+};
+
+export const fetchGroupUsers = (accessToken, groupId) => {
+  const $host = getAuthHost(accessToken);
+  return $host.get(`/v1/groups/${groupId}/users`);
 };
 
 export const fetchGroupIdentifier = (accessToken, groupId) => {
