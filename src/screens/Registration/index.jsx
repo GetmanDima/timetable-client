@@ -188,6 +188,7 @@ const Registration = ({navigation}) => {
                     onBlur={onBlur}
                     onChange={onChange}
                     invalid={invalid}
+                    secureTextEntry={true}
                     label="Пароль"
                     style={mainStyles.mt3}
                   />

@@ -128,6 +128,7 @@ const Auth = ({navigation}) => {
                     onBlur={onBlur}
                     onChange={onChange}
                     invalid={invalid}
+                    secureTextEntry={true}
                     label={"Password"}
                   />
                   {invalid && (

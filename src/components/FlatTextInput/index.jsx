@@ -11,6 +11,7 @@ const FlatTextInput = ({
   autoFocus,
   editable,
   keyboardType,
+  secureTextEntry,
   onChange,
   onBlur,
   style,
@@ -115,6 +116,7 @@ const FlatTextInput = ({
         blurOnSubmit={true}
         editable={editable}
         keyboardType={keyboardType}
+        secureTextEntry={secureTextEntry}
       />
     </View>
   );
@@ -127,6 +129,7 @@ FlatTextInput.propTypes = {
   autoFocus: PropTypes.bool,
   editable: PropTypes.bool,
   keyboardType: PropTypes.oneOf(["default", "numeric"]),
+  secureTextEntry: PropTypes.bool,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
   style: PropTypes.oneOfType([
@@ -140,6 +143,7 @@ FlatTextInput.defaultProps = {
   autoFocus: false,
   editable: true,
   keyboardType: "default",
+  secureTextEntry: false,
   onChange: () => {},
   onBlur: () => {},
   style: {},
