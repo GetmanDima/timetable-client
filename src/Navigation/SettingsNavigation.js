@@ -2,6 +2,7 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Settings from "../screens/Settings";
 import GroupInvites from "../screens/GroupInvites";
 import CreateGroupInvite from "../screens/CreateGroupInvite";
+import Group from "../screens/Group";
 import {lightDarkColor, whiteColor} from "../styles/constants";
 
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,13 @@ const SettingsNavigation = () => {
       component: CreateGroupInvite,
       options: {
         title: "Создать приглашение",
+      },
+    },
+    {
+      name: "Group",
+      component: Group,
+      options: {
+        title: "Группа",
       },
     },
   ];

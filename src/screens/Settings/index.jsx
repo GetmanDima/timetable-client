@@ -29,6 +29,14 @@ const Settings = ({navigation}) => {
         )}
         <Button
           onPress={() => {
+            navigation.navigate("Group");
+          }}
+          type="dark"
+          style={styles.item}
+          text="Группа"
+        />
+        <Button
+          onPress={() => {
             dispatch(logout());
           }}
           type="dark"
