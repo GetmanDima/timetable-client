@@ -4,6 +4,11 @@
 Сервер: https://github.com/GetmanDima/timetable-server  
 Парсер: https://github.com/GetmanDima/timetable-server-parser
 
+Данное приложение разработано на React Native  
+Презентация проекта находится в директории /docs  
+Протестировать, используя [Expo Go](https://expo.dev/client): https://expo.dev/@dimget/studentOrganizer  
+Скачать приложение [(apk файл)](https://drive.google.com/file/d/1pKM2EpqHQqm_Pw5e4d4HKjK2H3NEsXKV/view?usp=sharing).  
+
 Данное мобильное приложение позволяет студентам создавать/редактировать учебные расписания.  
 Также приложение позволяет студентам объединяться в группы с целью создания общего (группового) расписания.  
 В дальнейшем планируется развивать возможности, которые предоставляет группа.  
